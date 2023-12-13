@@ -1,6 +1,6 @@
 FROM postgres:latest
 
-ENV POSTGRES_DB=events
+ENV POSTGRES_DB=userEvents
 ENV POSTGRES_USER=user
 ENV POSTGRES_PASSWORD=pass
 

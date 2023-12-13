@@ -1,14 +1,12 @@
 package com.eventPlanner.models.dtos;
 
-public class UserRegistrationDto {
+public class UserLoginDto {
     private final String name;
     private final String password;
-    private final String email;
 
-    UserRegistrationDto(String name, String password, String email) {
+    public UserLoginDto(String name, String password) {
         this.name = name;
         this.password = password;
-        this.email = email;
     }
 
     public String getName() {
@@ -17,9 +15,5 @@ public class UserRegistrationDto {
 
     public String getPassword() {
         return password;
-    }
-
-    public String getEmail() {
-        return email;
     }
 }
