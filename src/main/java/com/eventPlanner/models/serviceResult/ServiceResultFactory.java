@@ -30,4 +30,7 @@ public class ServiceResultFactory {
     public static ServiceResult sessionEnded() {
         return new ServiceResult("Ended session", HttpStatus.OK);
     }
+    public static ServiceResult userDeleted() {
+        return new ServiceResult("User deleted", HttpStatus.OK);
+    }
 }

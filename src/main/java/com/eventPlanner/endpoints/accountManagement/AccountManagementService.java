@@ -1,6 +1,7 @@
 package com.eventPlanner.endpoints.accountManagement;
 
-import com.eventPlanner.dataAccess.userEvents.UsersRepository;
+import com.eventPlanner.dataAccess.userEvents.ParticipantsRepository;
+import com.eventPlanner.dataAccess.userEvents.UserRepository;
 import com.eventPlanner.dataAccess.sessions.SessionManager;
 import com.eventPlanner.models.schemas.User;
 import com.eventPlanner.models.serviceResult.ServiceResult;
@@ -10,13 +11,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AccountManagementService {
-    private final UsersRepository usersRepo;
+    private final UserRepository usersRepo;
+    private final ParticipantsRepository participantsRepository;
 
     private final SessionManager sessionManager;
 
     @Autowired
-    public AccountManagementService(UsersRepository usersRepo, SessionManager sessionManager) {
+    public AccountManagementService(UserRepository usersRepo, ParticipantsRepository participantsRepository, SessionManager sessionManager) {
         this.usersRepo = usersRepo;
+        this.participantsRepository = participantsRepository;
         this.sessionManager = sessionManager;
     }
 
@@ -38,16 +41,29 @@ public class AccountManagementService {
             return ServiceResultFactory.wrongUsernameOrPassword();
         }
 
-        String sessionId = this.sessionManager.createSession(name);
+        Long userId = this.usersRepo.getUserByName(name).getId();
+        String sessionId = this.sessionManager.createSession(userId);
         return ServiceResultFactory.sessionCreated(sessionId);
     }
 
     public ServiceResult LogoutUser(String sessionId) {
-        if (!this.sessionManager.exists(sessionId)) {
+        if (this.sessionManager.missing(sessionId)) {
             return ServiceResultFactory.invalidSession();
         }
 
         this.sessionManager.endSession(sessionId);
         return ServiceResultFactory.sessionEnded();
+    }
+
+    public ServiceResult DeleteUser(String sessionId) {
+        if (this.sessionManager.missing(sessionId)) {
+            return ServiceResultFactory.invalidSession();
+        }
+
+        Long userId = this.sessionManager.getUserIdFromSession(sessionId);
+        this.sessionManager.endSession(sessionId);
+        this.usersRepo.deleteById(userId);
+        this.participantsRepository.deleteAllByUserId(userId);
+        return ServiceResultFactory.userDeleted();
     }
 }

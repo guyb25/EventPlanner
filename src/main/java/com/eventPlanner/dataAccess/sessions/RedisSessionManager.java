@@ -16,16 +16,16 @@ public class RedisSessionManager implements SessionManager {
 
 
     @Override
-    public String createSession(String userId) {
+    public String createSession(Long userId) {
         String sessionId = UUID.randomUUID().toString();
-        jedis.set(SESSION_PREFIX + sessionId, userId);
+        jedis.set(SESSION_PREFIX + sessionId, userId.toString());
         jedis.expire(SESSION_PREFIX + sessionId, expirationTimeSeconds); // 30 * 60 seconds
         return sessionId;
     }
 
     @Override
-    public String getUserIdFromSession(String sessionId) {
-        return jedis.get(SESSION_PREFIX + sessionId);
+    public Long getUserIdFromSession(String sessionId) {
+        return Long.parseLong(jedis.get(SESSION_PREFIX + sessionId));
     }
 
     @Override
@@ -34,7 +34,7 @@ public class RedisSessionManager implements SessionManager {
     }
 
     @Override
-    public boolean exists(String sessionId) {
-        return jedis.exists(SESSION_PREFIX + sessionId);
+    public boolean missing(String sessionId) {
+        return !jedis.exists(SESSION_PREFIX + sessionId);
     }
 }
