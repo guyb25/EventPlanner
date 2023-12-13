@@ -1,4 +1,4 @@
-package com.eventplanner.endpoints.liveness;
+package com.eventPlanner.endpoints.liveness;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
