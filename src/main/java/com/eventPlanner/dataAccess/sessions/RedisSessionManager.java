@@ -32,4 +32,9 @@ public class RedisSessionManager implements SessionManager {
     public void endSession(String sessionId) {
         jedis.del(SESSION_PREFIX + sessionId);
     }
+
+    @Override
+    public boolean exists(String sessionId) {
+        return jedis.exists(SESSION_PREFIX + sessionId);
+    }
 }

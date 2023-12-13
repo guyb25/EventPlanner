@@ -41,4 +41,13 @@ public class AccountManagementService {
         String sessionId = this.sessionManager.createSession(name);
         return ServiceResultFactory.sessionCreated(sessionId);
     }
+
+    public ServiceResult LogoutUser(String sessionId) {
+        if (!this.sessionManager.exists(sessionId)) {
+            return ServiceResultFactory.invalidSession();
+        }
+
+        this.sessionManager.endSession(sessionId);
+        return ServiceResultFactory.sessionEnded();
+    }
 }

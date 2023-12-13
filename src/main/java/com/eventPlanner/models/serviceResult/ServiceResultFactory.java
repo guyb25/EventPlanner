@@ -22,4 +22,12 @@ public class ServiceResultFactory {
     public static ServiceResult sessionCreated(String sessionId) {
         return new ServiceResult(sessionId, HttpStatus.CREATED);
     }
+
+    public static ServiceResult invalidSession() {
+        return new ServiceResult("Invalid session ID", HttpStatus.UNAUTHORIZED);
+    }
+
+    public static ServiceResult sessionEnded() {
+        return new ServiceResult("Ended session", HttpStatus.OK);
+    }
 }
