@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,23 +29,25 @@ public class EventService {
     }
 
     @Transactional
-    public ServiceResult CreateEvent(String name, String description, String location, LocalDateTime time, List<Long> participants) {
+    public ServiceResult CreateEvent(String name, String description, String location, LocalDateTime time, List<String> participants) {
         Event event = new Event(name, description, location, time, LocalDateTime.now());
+        List<Long> participantsIds = new ArrayList<>();
 
-        for (Long participantId : participants) {
-            if (!userRepository.existsById(participantId)) {
-                throw new IllegalArgumentException("user ID not found: " + participantId);
+        for (String participant : participants) {
+            if (!userRepository.existsUserByName(participant)) {
+                throw new IllegalArgumentException("user not found: " + participant);
             }
         }
 
         // Make sure to grab the newly created event entity, that has the auto generated ID
         event = this.eventRepository.save(event);
 
-        for (Long participantId : participants) {
+        for (String participant : participants) {
+            Long participantId = userRepository.getUserByName(participant).getId();
             Participant eventParticipant = new Participant(event.getId(), participantId);
             this.participantsRepository.save(eventParticipant);
         }
 
-        return ServiceResultFactory.eventCreatedSuccessfully();
+        return ServiceResultFactory.eventCreatedSuccessfully(event.getId());
     }
 }

@@ -12,23 +12,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/events")
 @Tag(name = "Event Management")
 public class EventController {
-    private final EventService eventService;
+    private final EventServiceProxy eventServiceProxy;
 
     @Autowired
-    public EventController(EventService eventService) {
-        this.eventService = eventService;
+    public EventController(EventServiceProxy eventServiceProxy) {
+        this.eventServiceProxy = eventServiceProxy;
     }
 
     @PostMapping("/create")
     public ResponseEntity<String> createEvent(EventCreationDto eventCreationDto) {
-        return this.eventService
-                .CreateEvent(
-                        eventCreationDto.name(),
-                        eventCreationDto.description(),
-                        eventCreationDto.location(),
-                        eventCreationDto.time(),
-                        eventCreationDto.participants()
-                )
-                .toResponse();
+        return eventServiceProxy.CreateEvent(eventCreationDto).toResponse();
     }
 }
