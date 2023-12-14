@@ -16,7 +16,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 @Service
 public class EventService {
@@ -26,6 +30,8 @@ public class EventService {
     private final SessionManager sessionManager;
     private final ResponseFactory responseFactory;
 
+    private final Map<EventSortMethod, Function<Long, List<Event>>> sortMethodFunctionMap = new HashMap<>();
+
     @Autowired
     public EventService(EventRepository eventRepository, ParticipantsRepository participantsRepository, UserRepository userRepository, SessionManager sessionManager, ResponseFactory responseFactory) {
         this.eventRepository = eventRepository;
@@ -33,6 +39,10 @@ public class EventService {
         this.userRepository = userRepository;
         this.sessionManager = sessionManager;
         this.responseFactory = responseFactory;
+
+        sortMethodFunctionMap.put(EventSortMethod.DATE, participantsRepository::findAllEventsByParticipantIdOrderByTime);
+        sortMethodFunctionMap.put(EventSortMethod.CREATION_TIME, participantsRepository::findAllEventsByParticipantIdOrderByCreationTime);
+        sortMethodFunctionMap.put(EventSortMethod.POPULARITY, participantsRepository::findAllEventsByParticipantIdOrderByPopularity);
     }
 
     @Transactional
@@ -94,7 +104,7 @@ public class EventService {
         return responseFactory.event().eventDataList(eventDataDtoList);
     }
 
-    public ServiceResponse getAuthorizedEvents(String sessionId) {
+    public ServiceResponse getAuthorizedEvents(String sessionId, EventSortMethod eventSortMethod) {
         if (sessionManager.missing(sessionId)) {
             return responseFactory.session().invalidSession();
         }
@@ -102,7 +112,10 @@ public class EventService {
         Long userId = sessionManager.getUserIdFromSession(sessionId);
         String host = userRepository.getReferenceById(userId).getName();
 
-        List<Event> events = participantsRepository.findAllEventsByParticipantId(userId);
+        List<Event> events = sortMethodFunctionMap
+                .getOrDefault(eventSortMethod, participantsRepository::findAllEventsByParticipantId)
+                .apply(userId);
+
         List<EventDataDto> eventDataDtoList = events.stream().map(event -> buildEventDataDto(event, host)).toList();
 
         return responseFactory.event().eventDataList(eventDataDtoList);
@@ -139,21 +152,10 @@ public class EventService {
             return responseFactory.general().unauthorized();
         }
 
-        if (name != null) {
-            event.setName(name);
-        }
-
-        if (description != null) {
-            event.setDescription(description);
-        }
-
-        if (location != null) {
-            event.setLocation(location);
-        }
-
-        if (time != null) {
-            event.setTime(time);
-        }
+        updateIfNotNull(event::setName, name);
+        updateIfNotNull(event::setDescription, description);
+        updateIfNotNull(event::setLocation, location);
+        updateIfNotNull(event::setTime, time);
 
         if (participants != null) {
             participantsRepository.deleteAllByEventId(eventId);
@@ -193,5 +195,11 @@ public class EventService {
                 .stream()
                 .map(user -> new Participant(eventId, userRepository.findUserByName(user).getId()))
                 .toList();
+    }
+
+    private <T> void updateIfNotNull(Consumer<T> setter, T value) {
+        if (value != null) {
+            setter.accept(value);
+        }
     }
 }

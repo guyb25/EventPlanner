@@ -45,7 +45,7 @@ public class EventServiceProxy {
     }
 
     public ServiceResponse<List<EventDataDto>> getAuthorizedEvents(RequestAuthorizedEventsDto requestAuthorizedEventsDto) {
-        return eventService.getAuthorizedEvents(requestAuthorizedEventsDto.sessionId());
+        return eventService.getAuthorizedEvents(requestAuthorizedEventsDto.sessionId(), requestAuthorizedEventsDto.eventSortMethod());
     }
 
     public ServiceResponse<EventDataDto> getSpecificEvent(RequestSpecificEventDto requestSpecificEventDto) {

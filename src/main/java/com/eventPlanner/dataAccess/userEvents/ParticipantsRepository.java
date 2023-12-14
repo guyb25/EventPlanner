@@ -24,8 +24,30 @@ public interface ParticipantsRepository extends JpaRepository<Participant, Event
     @Query("SELECT participant.id.userId FROM Participant participant WHERE participant.id.eventId = :eventId")
     List<Long> findAllByEventId(Long eventId);
 
-    @Query("SELECT participant.id.eventId FROM Participant participant WHERE participant.id.userId = :userId")
-    List<Event> findAllEventsByParticipantId(Long userId);
+    @Query("SELECT event FROM Participant participant " +
+            "INNER JOIN Event event ON event.id = participant.id.eventId " +
+            "WHERE participant.id.userId = :participantId")
+    List<Event> findAllEventsByParticipantId(Long participantId);
+
+    @Query("SELECT event FROM Participant participant " +
+            "INNER JOIN Event event ON event.id = participant.id.eventId " +
+            "WHERE participant.id.userId = :participantId " +
+            "ORDER BY event.time")
+    List<Event> findAllEventsByParticipantIdOrderByTime(Long participantId);
+
+    @Query("SELECT event FROM Participant participant " +
+            "INNER JOIN Event event ON event.id = participant.id.eventId " +
+            "WHERE participant.id.userId = :participantId " +
+            "ORDER BY event.creationTime")
+    List<Event> findAllEventsByParticipantIdOrderByCreationTime(Long participantId);
+
+    @Query("SELECT event " +
+            "FROM Event event " +
+            "LEFT JOIN Participant participant " +
+            "ON participant.id.eventId = event.id AND participant.id.userId = :participantId " +
+            "GROUP BY event.id " +
+            "ORDER BY COUNT(participant) DESC")
+    List<Event> findAllEventsByParticipantIdOrderByPopularity(Long participantId);
 
     @Query("SELECT event FROM Event event " +
             "INNER JOIN Participant participant ON event.id = participant.id.eventId " +
