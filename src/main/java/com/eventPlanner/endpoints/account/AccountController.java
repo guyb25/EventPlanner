@@ -1,9 +1,9 @@
-package com.eventPlanner.endpoints.accountManagement;
+package com.eventPlanner.endpoints.account;
 
-import com.eventPlanner.models.dtos.accountManagement.UserLoginDto;
-import com.eventPlanner.models.dtos.accountManagement.UserLogoutDto;
-import com.eventPlanner.models.dtos.accountManagement.UserRegistrationDto;
-import com.eventPlanner.models.dtos.accountManagement.UserTerminationDto;
+import com.eventPlanner.models.dtos.account.UserLoginDto;
+import com.eventPlanner.models.dtos.account.UserLogoutDto;
+import com.eventPlanner.models.dtos.account.UserRegistrationDto;
+import com.eventPlanner.models.dtos.account.UserTerminationDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/accounts")
 @Tag(name = "Account Management")
-public class AccountManagementController {
-    private final AccountManagementService accountManagementService;
+public class AccountController {
+    private final AccountService accountManagementService;
 
     @Autowired
-    public AccountManagementController(AccountManagementService accountManagementService) {
+    public AccountController(AccountService accountManagementService) {
         this.accountManagementService = accountManagementService;
     }
 

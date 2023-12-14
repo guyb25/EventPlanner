@@ -1,4 +1,4 @@
-package com.eventPlanner.endpoints.accountManagement;
+package com.eventPlanner.endpoints.account;
 
 import com.eventPlanner.dataAccess.userEvents.ParticipantsRepository;
 import com.eventPlanner.dataAccess.userEvents.UserRepository;
@@ -11,14 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AccountManagementService {
+public class AccountService {
     private final UserRepository usersRepo;
     private final ParticipantsRepository participantsRepository;
 
     private final SessionManager sessionManager;
 
     @Autowired
-    public AccountManagementService(UserRepository usersRepo, ParticipantsRepository participantsRepository, SessionManager sessionManager) {
+    public AccountService(UserRepository usersRepo, ParticipantsRepository participantsRepository, SessionManager sessionManager) {
         this.usersRepo = usersRepo;
         this.participantsRepository = participantsRepository;
         this.sessionManager = sessionManager;
