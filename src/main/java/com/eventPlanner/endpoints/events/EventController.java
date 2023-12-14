@@ -41,4 +41,9 @@ public class EventController {
     public ResponseEntity<List<EventDataDto>> retrieveAuthorizedEvents(AuthorizedEventsRequestDto authorizedEventsRequestDto) {
         return eventServiceProxy.getAuthorizedEvents(authorizedEventsRequestDto).toResponse();
     }
+
+    @PostMapping("/retrieve/specific")
+    public ResponseEntity<EventDataDto> retrieveSpecificEvent(SpecificEventRequestDto specificEventRequestDto) {
+        return eventServiceProxy.getSpecificEvent(specificEventRequestDto).toResponse();
+    }
 }

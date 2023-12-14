@@ -112,6 +112,23 @@ public class EventService {
         return ServiceResultFactory.eventDataList(eventDataDtoList);
     }
 
+    public ServiceResult getSpecificEvent(String sessionId, Long eventId) {
+        if (sessionManager.missing(sessionId)) {
+            return ServiceResultFactory.invalidSession();
+        }
+
+        Long userId = sessionManager.getUserIdFromSession(sessionId);
+        Event event = eventRepository.findEventById(eventId);
+        List<Long> participants = participantsRepository.findAllByEventId(eventId);
+
+        if (!event.getHostId().equals(userId) && !participants.contains(userId)) {
+            return ServiceResultFactory.unauthorized();
+        }
+
+        String host = userRepository.getReferenceById(userId).getName();
+        return ServiceResultFactory.eventData(buildEventDataDto(event, host));
+    }
+
     private EventDataDto buildEventDataDto(Event event, String host) {
         List<Long> participantsIds = participantsRepository.findAllByEventId(event.getId());
         List<String> participantsNames = new ArrayList<>();

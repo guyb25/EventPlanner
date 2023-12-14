@@ -43,6 +43,10 @@ public class EventServiceProxy {
     }
 
     public ServiceResult<List<EventDataDto>> getAuthorizedEvents(AuthorizedEventsRequestDto authorizedEventsRequestDto) {
-        return eventService.getOwnedEvents(authorizedEventsRequestDto.sessionId());
+        return eventService.getAuthorizedEvents(authorizedEventsRequestDto.sessionId());
+    }
+
+    public ServiceResult<EventDataDto> getSpecificEvent(SpecificEventRequestDto specificEventRequestDto) {
+        return eventService.getSpecificEvent(specificEventRequestDto.sessionId(), specificEventRequestDto.eventId());
     }
 }

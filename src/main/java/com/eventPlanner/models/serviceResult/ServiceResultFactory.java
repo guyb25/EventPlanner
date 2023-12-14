@@ -60,4 +60,8 @@ public class ServiceResultFactory {
     public static ServiceResult eventDataList(List<EventDataDto> eventDataDtoList) {
         return new ServiceResult(eventDataDtoList, HttpStatus.OK);
     }
+
+    public static ServiceResult eventData(EventDataDto eventDataDto) {
+        return new ServiceResult(eventDataDto, HttpStatus.OK);
+    }
 }
