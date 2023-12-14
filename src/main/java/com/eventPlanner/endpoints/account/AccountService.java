@@ -63,9 +63,9 @@ public class AccountService {
         }
 
         Long userId = this.sessionManager.getUserIdFromSession(sessionId);
-        this.sessionManager.endSession(sessionId);
         this.participantsRepository.deleteAllByUserId(userId);
         this.usersRepo.deleteById(userId);
+        this.sessionManager.endSession(sessionId);
         return ServiceResultFactory.userDeleted();
     }
 }
