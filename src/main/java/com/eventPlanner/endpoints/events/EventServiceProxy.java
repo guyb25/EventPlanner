@@ -1,9 +1,6 @@
 package com.eventPlanner.endpoints.events;
 
-import com.eventPlanner.models.dtos.events.EventCreationDto;
-import com.eventPlanner.models.dtos.events.EventDataDto;
-import com.eventPlanner.models.dtos.events.EventDeletionDto;
-import com.eventPlanner.models.dtos.events.OwnedEventsRequestDto;
+import com.eventPlanner.models.dtos.events.*;
 import com.eventPlanner.models.serviceResult.ServiceResult;
 import com.eventPlanner.models.serviceResult.ServiceResultFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +17,9 @@ public class EventServiceProxy {
         this.eventService = eventService;
     }
 
-    public ServiceResult<String> CreateEvent(EventCreationDto eventCreationDto) {
+    public ServiceResult<String> createEvent(EventCreationDto eventCreationDto) {
         try {
-            return eventService.CreateEvent(
+            return eventService.createEvent(
                     eventCreationDto.name(),
                     eventCreationDto.sessionId(),
                     eventCreationDto.description(),
@@ -37,11 +34,15 @@ public class EventServiceProxy {
         }
     }
 
-    public ServiceResult<String> DeleteEvent(EventDeletionDto eventDeletionDto) {
-        return eventService.DeleteEvent(eventDeletionDto.eventId(), eventDeletionDto.sessionId());
+    public ServiceResult<String> deleteEvent(EventDeletionDto eventDeletionDto) {
+        return eventService.deleteEvent(eventDeletionDto.eventId(), eventDeletionDto.sessionId());
     }
 
-    public ServiceResult<List<EventDataDto>> GetOwnedEvents(OwnedEventsRequestDto ownedEventsRequestDto) {
-        return eventService.GetOwnedEvents(ownedEventsRequestDto.sessionId());
+    public ServiceResult<List<EventDataDto>> getOwnedEvents(OwnedEventsRequestDto ownedEventsRequestDto) {
+        return eventService.getOwnedEvents(ownedEventsRequestDto.sessionId());
+    }
+
+    public ServiceResult<List<EventDataDto>> getAuthorizedEvents(AuthorizedEventsRequestDto authorizedEventsRequestDto) {
+        return eventService.getOwnedEvents(authorizedEventsRequestDto.sessionId());
     }
 }

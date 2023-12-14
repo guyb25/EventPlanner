@@ -20,7 +20,9 @@ public interface ParticipantsRepository extends JpaRepository<Participant, Event
     @Query("DELETE FROM Participant participant WHERE participant.id.eventId = :eventId")
     void deleteAllByEventId(Long eventId);
 
-    @Transactional
     @Query("SELECT participant.id.userId FROM Participant participant WHERE participant.id.eventId = :eventId")
     List<Long> findAllByEventId(Long eventId);
+
+    @Query("SELECT participant.id.eventId FROM Participant participant WHERE participant.id.userId = :userId")
+    List<Long> findAllByUserId(Long userId);
 }

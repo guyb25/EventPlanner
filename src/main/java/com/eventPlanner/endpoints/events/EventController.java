@@ -1,9 +1,6 @@
 package com.eventPlanner.endpoints.events;
 
-import com.eventPlanner.models.dtos.events.EventCreationDto;
-import com.eventPlanner.models.dtos.events.EventDataDto;
-import com.eventPlanner.models.dtos.events.EventDeletionDto;
-import com.eventPlanner.models.dtos.events.OwnedEventsRequestDto;
+import com.eventPlanner.models.dtos.events.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,16 +24,21 @@ public class EventController {
 
     @PostMapping("/create")
     public ResponseEntity<String> createEvent(EventCreationDto eventCreationDto) {
-        return eventServiceProxy.CreateEvent(eventCreationDto).toResponse();
+        return eventServiceProxy.createEvent(eventCreationDto).toResponse();
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteEvent(EventDeletionDto eventDeletionDto) {
-        return eventServiceProxy.DeleteEvent(eventDeletionDto).toResponse();
+        return eventServiceProxy.deleteEvent(eventDeletionDto).toResponse();
     }
 
     @PostMapping("/retrieve/owned")
     public ResponseEntity<List<EventDataDto>> retrieveOwnedEvents(OwnedEventsRequestDto ownedEventsRequestDto) {
-        return eventServiceProxy.GetOwnedEvents(ownedEventsRequestDto).toResponse();
+        return eventServiceProxy.getOwnedEvents(ownedEventsRequestDto).toResponse();
+    }
+
+    @PostMapping("/retrieve/authorized")
+    public ResponseEntity<List<EventDataDto>> retrieveAuthorizedEvents(AuthorizedEventsRequestDto authorizedEventsRequestDto) {
+        return eventServiceProxy.getAuthorizedEvents(authorizedEventsRequestDto).toResponse();
     }
 }

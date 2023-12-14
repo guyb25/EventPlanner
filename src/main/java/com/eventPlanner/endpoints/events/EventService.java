@@ -33,7 +33,7 @@ public class EventService {
     }
 
     @Transactional
-    public ServiceResult CreateEvent(String name, String sessionId, String description, String location, LocalDateTime time, List<String> participants) {
+    public ServiceResult createEvent(String name, String sessionId, String description, String location, LocalDateTime time, List<String> participants) {
         Long hostId = sessionManager.getUserIdFromSession(sessionId);
         Event event = new Event(name, hostId, description, location, time, LocalDateTime.now());
 
@@ -56,7 +56,7 @@ public class EventService {
     }
 
     @Transactional
-    public ServiceResult DeleteEvent(Long id, String sessionId) {
+    public ServiceResult deleteEvent(Long id, String sessionId) {
         if (sessionManager.missing(sessionId)) {
             return ServiceResultFactory.invalidSession();
         }
@@ -77,7 +77,7 @@ public class EventService {
         return ServiceResultFactory.eventDeleted();
     }
 
-    public ServiceResult GetOwnedEvents(String sessionId) {
+    public ServiceResult getOwnedEvents(String sessionId) {
         if (sessionManager.missing(sessionId)) {
             return ServiceResultFactory.invalidSession();
         }
@@ -88,14 +88,31 @@ public class EventService {
         List<EventDataDto> eventDataDtoList = new ArrayList<>();
 
         for (Event event : ownedEvents) {
-            eventDataDtoList.add(BuildEventDataDto(event, host));
+            eventDataDtoList.add(buildEventDataDto(event, host));
         }
 
         return ServiceResultFactory.eventDataList(eventDataDtoList);
     }
 
-    private EventDataDto BuildEventDataDto(Event event, String host) {
+    public ServiceResult getAuthorizedEvents(String sessionId) {
+        if (sessionManager.missing(sessionId)) {
+            return ServiceResultFactory.invalidSession();
+        }
 
+        Long userId = sessionManager.getUserIdFromSession(sessionId);
+        String host = userRepository.getReferenceById(userId).getName();
+        List<Long> eventIds = participantsRepository.findAllByUserId(userId);
+        List<EventDataDto> eventDataDtoList = new ArrayList<>();
+
+        for (Long eventId : eventIds) {
+            Event event = eventRepository.findEventById(eventId);
+            eventDataDtoList.add(buildEventDataDto(event, host));
+        }
+
+        return ServiceResultFactory.eventDataList(eventDataDtoList);
+    }
+
+    private EventDataDto buildEventDataDto(Event event, String host) {
         List<Long> participantsIds = participantsRepository.findAllByEventId(event.getId());
         List<String> participantsNames = new ArrayList<>();
 
