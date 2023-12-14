@@ -1,8 +1,9 @@
 package com.eventPlanner.endpoints.accountManagement;
 
-import com.eventPlanner.models.dtos.UserLoginDto;
-import com.eventPlanner.models.dtos.UserLogoutDto;
-import com.eventPlanner.models.dtos.UserRegistrationDto;
+import com.eventPlanner.models.dtos.accountManagement.UserLoginDto;
+import com.eventPlanner.models.dtos.accountManagement.UserLogoutDto;
+import com.eventPlanner.models.dtos.accountManagement.UserRegistrationDto;
+import com.eventPlanner.models.dtos.accountManagement.UserTerminationDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,13 @@ public class AccountManagementController {
     public ResponseEntity<String> logoutAccount(@RequestBody UserLogoutDto logoutDto) {
         return accountManagementService
                 .LogoutUser(logoutDto.sessionId())
+                .toResponse();
+    }
+
+    @DeleteMapping("/terminate")
+    public ResponseEntity<String> deleteAccount(@RequestBody UserTerminationDto userTerminationDto) {
+        return accountManagementService
+                .DeleteUser(userTerminationDto.sessionId())
                 .toResponse();
     }
 }
