@@ -10,10 +10,12 @@ CREATE TABLE users (
 CREATE TABLE events (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100),
+    host_id INT NOT NULL,
     description TEXT,
     location VARCHAR(100),
     time TIMESTAMP,
-    creation_time TIMESTAMP
+    creation_time TIMESTAMP,
+    FOREIGN KEY (host_id) REFERENCES users(id)
 );
 
 -- Create event_participants table

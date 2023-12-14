@@ -1,5 +1,6 @@
 package com.eventPlanner.endpoints.events;
 
+import com.eventPlanner.dataAccess.sessions.SessionManager;
 import com.eventPlanner.dataAccess.userEvents.EventRepository;
 import com.eventPlanner.dataAccess.userEvents.ParticipantsRepository;
 import com.eventPlanner.dataAccess.userEvents.UserRepository;
@@ -20,18 +21,20 @@ public class EventService {
     private final EventRepository eventRepository;
     private final ParticipantsRepository participantsRepository;
     private final UserRepository userRepository;
+    private final SessionManager sessionManager;
 
     @Autowired
-    public EventService(EventRepository eventRepository, ParticipantsRepository participantsRepository, UserRepository userRepository) {
+    public EventService(EventRepository eventRepository, ParticipantsRepository participantsRepository, UserRepository userRepository, SessionManager sessionManager) {
         this.eventRepository = eventRepository;
         this.participantsRepository = participantsRepository;
         this.userRepository = userRepository;
+        this.sessionManager = sessionManager;
     }
 
     @Transactional
-    public ServiceResult CreateEvent(String name, String description, String location, LocalDateTime time, List<String> participants) {
-        Event event = new Event(name, description, location, time, LocalDateTime.now());
-        List<Long> participantsIds = new ArrayList<>();
+    public ServiceResult CreateEvent(String name, String sessionId, String description, String location, LocalDateTime time, List<String> participants) {
+        Long hostId = sessionManager.getUserIdFromSession(sessionId);
+        Event event = new Event(name, hostId, description, location, time, LocalDateTime.now());
 
         for (String participant : participants) {
             if (!userRepository.existsUserByName(participant)) {
@@ -40,14 +43,21 @@ public class EventService {
         }
 
         // Make sure to grab the newly created event entity, that has the auto generated ID
-        event = this.eventRepository.save(event);
+        event = eventRepository.save(event);
 
         for (String participant : participants) {
             Long participantId = userRepository.getUserByName(participant).getId();
             Participant eventParticipant = new Participant(event.getId(), participantId);
-            this.participantsRepository.save(eventParticipant);
+            participantsRepository.save(eventParticipant);
         }
 
         return ServiceResultFactory.eventCreatedSuccessfully(event.getId());
+    }
+
+    @Transactional
+    public ServiceResult DeleteEvent(Long id) {
+        eventRepository.deleteById(id);
+        participantsRepository.deleteAllByEventId(id);
+        return ServiceResultFactory.eventDeleted();
     }
 }

@@ -7,6 +7,7 @@ import java.util.List;
 
 public record EventCreationDto(
         String name,
+        String sessionId,
         String description,
         String location,
         @Schema(type = "string", example = "2023-12-14T09:03:32") LocalDateTime time,

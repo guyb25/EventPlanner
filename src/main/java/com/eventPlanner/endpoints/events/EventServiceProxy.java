@@ -1,6 +1,7 @@
 package com.eventPlanner.endpoints.events;
 
 import com.eventPlanner.models.dtos.events.EventCreationDto;
+import com.eventPlanner.models.dtos.events.EventDeletionDto;
 import com.eventPlanner.models.serviceResult.ServiceResult;
 import com.eventPlanner.models.serviceResult.ServiceResultFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ public class EventServiceProxy {
         try {
             return eventService.CreateEvent(
                     eventCreationDto.name(),
+                    eventCreationDto.sessionId(),
                     eventCreationDto.description(),
                     eventCreationDto.location(),
                     eventCreationDto.time(),
@@ -29,5 +31,9 @@ public class EventServiceProxy {
         catch (IllegalArgumentException e) {
             return ServiceResultFactory.userNotFound(e.getMessage());
         }
+    }
+
+    public ServiceResult<String> DeleteEvent(EventDeletionDto eventDeletionDto) {
+        return eventService.DeleteEvent(eventDeletionDto.eventId());
     }
 }

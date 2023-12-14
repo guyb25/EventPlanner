@@ -41,4 +41,8 @@ public class ServiceResultFactory {
     public static ServiceResult eventCreatedSuccessfully(Long eventId) {
         return new ServiceResult("Event created successfully, event id: " + eventId, HttpStatus.CREATED);
     }
+
+    public static ServiceResult eventDeleted() {
+        return new ServiceResult("Event deleted.", HttpStatus.OK);
+    }
 }
