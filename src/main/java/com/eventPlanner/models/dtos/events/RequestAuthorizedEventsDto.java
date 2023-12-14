@@ -1,4 +1,6 @@
 package com.eventPlanner.models.dtos.events;
 
-public record RequestAuthorizedEventsDto(String sessionId) {
+import com.eventPlanner.models.types.EventSortMethod;
+
+public record RequestAuthorizedEventsDto(String sessionId, EventSortMethod eventSortMethod) {
 }

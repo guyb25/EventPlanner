@@ -1,5 +1,6 @@
 package com.eventPlanner.dataAccess.userEvents;
 
+import com.eventPlanner.models.schemas.Event;
 import com.eventPlanner.models.schemas.EventParticipantId;
 import com.eventPlanner.models.schemas.Participant;
 import jakarta.transaction.Transactional;
@@ -24,11 +25,11 @@ public interface ParticipantsRepository extends JpaRepository<Participant, Event
     List<Long> findAllByEventId(Long eventId);
 
     @Query("SELECT participant.id.eventId FROM Participant participant WHERE participant.id.userId = :userId")
-    List<Long> findAllByUserId(Long userId);
+    List<Event> findAllEventsByParticipantId(Long userId);
 
-    @Query("SELECT event.id FROM Event event " +
+    @Query("SELECT event FROM Event event " +
             "INNER JOIN Participant participant ON event.id = participant.id.eventId " +
             "INNER JOIN User user ON participant.id.userId = user.id " +
             "WHERE user.id = :userId AND event.location = :location")
-    List<Long> findAllByUserIdAndLocation(Long userId, String location);
+    List<Event> findAllEventsByUserIdAndLocation(Long userId, String location);
 }

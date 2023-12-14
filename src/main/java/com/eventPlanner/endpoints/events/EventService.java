@@ -9,6 +9,7 @@ import com.eventPlanner.models.schemas.Event;
 import com.eventPlanner.models.schemas.Participant;
 import com.eventPlanner.models.serviceResponse.ServiceResponse;
 import com.eventPlanner.models.serviceResponse.factories.ResponseFactory;
+import com.eventPlanner.models.types.EventSortMethod;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -104,8 +105,11 @@ public class EventService {
 
         Long userId = sessionManager.getUserIdFromSession(sessionId);
         String host = userRepository.getReferenceById(userId).getName();
-        List<Long> eventIds = participantsRepository.findAllByUserId(userId);
-        return responseFactory.event().eventDataList(buildEventDataDtos(eventIds, host));
+
+        List<Event> events = participantsRepository.findAllEventsByParticipantId(userId);
+        List<EventDataDto> eventDataDtoList = events.stream().map(event -> buildEventDataDto(event, host)).toList();
+
+        return responseFactory.event().eventDataList(eventDataDtoList);
     }
 
     public ServiceResponse getSpecificEvent(String sessionId, Long eventId) {
@@ -171,19 +175,9 @@ public class EventService {
 
         Long userId = sessionManager.getUserIdFromSession(sessionId);
         String host = userRepository.getReferenceById(userId).getName();
-        List<Long> eventIds = participantsRepository.findAllByUserIdAndLocation(userId, location);
-        return responseFactory.event().eventDataList(buildEventDataDtos(eventIds, host));
-    }
-
-    private List<EventDataDto> buildEventDataDtos(List<Long> eventIds, String host) {
-        List<EventDataDto> eventDataDtoList = new ArrayList<>();
-
-        for (Long eventId : eventIds) {
-            Event event = eventRepository.findEventById(eventId);
-            eventDataDtoList.add(buildEventDataDto(event, host));
-        }
-
-        return eventDataDtoList;
+        List<Event> events = participantsRepository.findAllEventsByUserIdAndLocation(userId, location);
+        List<EventDataDto> eventDataDtoList = events.stream().map(event -> buildEventDataDto(event, host)).toList();
+        return responseFactory.event().eventDataList(eventDataDtoList);
     }
 
     private EventDataDto buildEventDataDto(Event event, String host) {
@@ -197,7 +191,6 @@ public class EventService {
         return (new EventDataDto(event.getId(), event.getName(), host, event.getDescription(),
                 event.getLocation(), event.getTime(), event.getCreationTime(), participantsNames));
     }
-
 
     private List<Participant> buildParticipantsList(List<String> users, Long eventId) {
         List<Participant> participants = new ArrayList<>();
