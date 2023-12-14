@@ -34,27 +34,55 @@ public class Event {
         return id;
     }
 
-    public Long getHostId() {
-        return hostId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Long getHostId() {
+        return hostId;
+    }
+
+    public void setHostId(Long hostId) {
+        this.hostId = hostId;
+    }
+
     public String getDescription() {
         return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getLocation() {
         return location;
     }
 
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     public LocalDateTime getTime() {
         return time;
     }
 
+    public void setTime(LocalDateTime time) {
+        this.time = time;
+    }
+
     public LocalDateTime getCreationTime() {
         return creationTime;
+    }
+
+    public void setCreationTime(LocalDateTime creationTime) {
+        this.creationTime = creationTime;
     }
 }

@@ -49,4 +49,16 @@ public class EventServiceProxy {
     public ServiceResult<EventDataDto> getSpecificEvent(SpecificEventRequestDto specificEventRequestDto) {
         return eventService.getSpecificEvent(specificEventRequestDto.sessionId(), specificEventRequestDto.eventId());
     }
+
+    public ServiceResult<String> updateSpecificEvent(EventUpdateDto eventUpdateDto) {
+        return eventService.updateSpecificEvent(
+                eventUpdateDto.sessionId(),
+                eventUpdateDto.eventId(),
+                eventUpdateDto.name(),
+                eventUpdateDto.description(),
+                eventUpdateDto.location(),
+                eventUpdateDto.time(),
+                eventUpdateDto.participants()
+        );
+    }
 }

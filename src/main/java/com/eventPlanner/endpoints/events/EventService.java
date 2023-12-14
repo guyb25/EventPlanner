@@ -9,6 +9,7 @@ import com.eventPlanner.models.schemas.Event;
 import com.eventPlanner.models.schemas.Participant;
 import com.eventPlanner.models.serviceResult.ServiceResult;
 import com.eventPlanner.models.serviceResult.ServiceResultFactory;
+import jakarta.servlet.http.Part;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,13 +47,21 @@ public class EventService {
         // Make sure to grab the newly created event entity, that has the auto generated ID
         event = eventRepository.save(event);
 
-        for (String participant : participants) {
-            Long participantId = userRepository.findUserByName(participant).getId();
-            Participant eventParticipant = new Participant(event.getId(), participantId);
-            participantsRepository.save(eventParticipant);
-        }
+        List<Participant> participantList = buildParticipantsList(participants, event.getId());
+        participantsRepository.saveAll(participantList);
 
         return ServiceResultFactory.eventCreatedSuccessfully(event.getId());
+    }
+
+    private List<Participant> buildParticipantsList(List<String> users, Long eventId) {
+        List<Participant> participants = new ArrayList<>();
+
+        for (String user : users) {
+            Long participantId = userRepository.findUserByName(user).getId();
+            participants.add(new Participant(eventId, participantId));
+        }
+
+        return participants;
     }
 
     @Transactional
@@ -127,6 +136,45 @@ public class EventService {
 
         String host = userRepository.getReferenceById(userId).getName();
         return ServiceResultFactory.eventData(buildEventDataDto(event, host));
+    }
+
+    @Transactional
+    public ServiceResult updateSpecificEvent(String sessionId, Long eventId, String name, String description,
+                                             String location, LocalDateTime time, List<String> participants) {
+        if (sessionManager.missing(sessionId)) {
+            return ServiceResultFactory.invalidSession();
+        }
+
+        Long userId = sessionManager.getUserIdFromSession(sessionId);
+        Event event = eventRepository.findEventById(eventId);
+
+        if (!event.getHostId().equals(userId)) {
+            return ServiceResultFactory.unauthorized();
+        }
+
+        if (name != null) {
+            event.setName(name);
+        }
+
+        if (description != null) {
+            event.setDescription(description);
+        }
+
+        if (location != null) {
+            event.setLocation(location);
+        }
+
+        if (time != null) {
+            event.setTime(time);
+        }
+
+        if (participants != null) {
+            participantsRepository.deleteAllByEventId(eventId);
+            List<Participant> participantList = buildParticipantsList(participants, eventId);
+            participantsRepository.saveAll(participantList);
+        }
+
+        return ServiceResultFactory.success();
     }
 
     private EventDataDto buildEventDataDto(Event event, String host) {

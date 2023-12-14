@@ -64,4 +64,8 @@ public class ServiceResultFactory {
     public static ServiceResult eventData(EventDataDto eventDataDto) {
         return new ServiceResult(eventDataDto, HttpStatus.OK);
     }
+
+    public static ServiceResult success() {
+        return new ServiceResult("success", HttpStatus.OK);
+    }
 }
