@@ -89,11 +89,7 @@ public class EventService {
         Long userId = sessionManager.getUserIdFromSession(sessionId);
         String host = userRepository.getReferenceById(userId).getName();
         List<Event> ownedEvents = eventRepository.findEventsByHostId(userId);
-        List<EventDataDto> eventDataDtoList = new ArrayList<>();
-
-        for (Event event : ownedEvents) {
-            eventDataDtoList.add(buildEventDataDto(event, host));
-        }
+        List<EventDataDto> eventDataDtoList = ownedEvents.stream().map(event -> buildEventDataDto(event, host)).toList();
 
         return responseFactory.event().eventDataList(eventDataDtoList);
     }
@@ -193,13 +189,9 @@ public class EventService {
     }
 
     private List<Participant> buildParticipantsList(List<String> users, Long eventId) {
-        List<Participant> participants = new ArrayList<>();
-
-        for (String user : users) {
-            Long participantId = userRepository.findUserByName(user).getId();
-            participants.add(new Participant(eventId, participantId));
-        }
-
-        return participants;
+        return users
+                .stream()
+                .map(user -> new Participant(eventId, userRepository.findUserByName(user).getId()))
+                .toList();
     }
 }
