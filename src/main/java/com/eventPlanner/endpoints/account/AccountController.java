@@ -23,28 +23,28 @@ public class AccountController {
     @PostMapping("/create")
     public ResponseEntity<String> createAccount(@RequestBody UserRegistrationDto regDto) {
         return accountManagementService
-                .CreateUser(regDto.name(), regDto.password(), regDto.email())
+                .createUser(regDto.name(), regDto.password(), regDto.email())
                 .toResponse();
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> loginAccount(@RequestBody UserLoginDto loginDto) {
         return accountManagementService
-                .LoginUser(loginDto.name(), loginDto.password())
+                .loginUser(loginDto.name(), loginDto.password())
                 .toResponse();
     }
 
     @DeleteMapping("/logout")
     public ResponseEntity<String> logoutAccount(@RequestBody UserLogoutDto logoutDto) {
         return accountManagementService
-                .LogoutUser(logoutDto.sessionId())
+                .logoutUser(logoutDto.sessionId())
                 .toResponse();
     }
 
     @DeleteMapping("/terminate")
     public ResponseEntity<String> deleteAccount(@RequestBody UserTerminationDto userTerminationDto) {
         return accountManagementService
-                .DeleteUser(userTerminationDto.sessionId())
+                .deleteUser(userTerminationDto.sessionId())
                 .toResponse();
     }
 }

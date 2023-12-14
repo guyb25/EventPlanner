@@ -24,7 +24,7 @@ public class AccountService {
         this.sessionManager = sessionManager;
     }
 
-    public ServiceResult CreateUser(String name, String password, String email) {
+    public ServiceResult createUser(String name, String password, String email) {
         if (this.usersRepo.existsUserByName(name)) {
             return ServiceResultFactory.usernameTaken();
         }
@@ -37,7 +37,7 @@ public class AccountService {
         return ServiceResultFactory.userCreated();
     }
 
-    public ServiceResult LoginUser(String name, String password) {
+    public ServiceResult loginUser(String name, String password) {
         if (!this.usersRepo.existsByNameAndPassword(name, password)) {
             return ServiceResultFactory.wrongUsernameOrPassword();
         }
@@ -47,7 +47,7 @@ public class AccountService {
         return ServiceResultFactory.sessionCreated(sessionId);
     }
 
-    public ServiceResult LogoutUser(String sessionId) {
+    public ServiceResult logoutUser(String sessionId) {
         if (this.sessionManager.missing(sessionId)) {
             return ServiceResultFactory.invalidSession();
         }
@@ -57,7 +57,7 @@ public class AccountService {
     }
 
     @Transactional
-    public ServiceResult DeleteUser(String sessionId) {
+    public ServiceResult deleteUser(String sessionId) {
         if (this.sessionManager.missing(sessionId)) {
             return ServiceResultFactory.invalidSession();
         }
