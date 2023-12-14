@@ -13,7 +13,7 @@ CREATE TABLE events (
     description TEXT,
     location VARCHAR(100),
     time TIMESTAMP,
-    creationTime TIMESTAMP
+    creation_time TIMESTAMP
 );
 
 -- Create event_participants table

@@ -33,4 +33,12 @@ public class ServiceResultFactory {
     public static ServiceResult userDeleted() {
         return new ServiceResult("User deleted", HttpStatus.OK);
     }
+
+    public static ServiceResult userIdNotFound(Long userId) {
+        return new ServiceResult("UserID" + userId + "not found", HttpStatus.NOT_FOUND);
+    }
+
+    public static ServiceResult eventCreatedSuccessfully() {
+        return new ServiceResult("Event created successfully", HttpStatus.CREATED);
+    }
 }

@@ -6,6 +6,7 @@ import com.eventPlanner.dataAccess.sessions.SessionManager;
 import com.eventPlanner.models.schemas.User;
 import com.eventPlanner.models.serviceResult.ServiceResult;
 import com.eventPlanner.models.serviceResult.ServiceResultFactory;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,6 +56,7 @@ public class AccountManagementService {
         return ServiceResultFactory.sessionEnded();
     }
 
+    @Transactional
     public ServiceResult DeleteUser(String sessionId) {
         if (this.sessionManager.missing(sessionId)) {
             return ServiceResultFactory.invalidSession();
@@ -62,8 +64,8 @@ public class AccountManagementService {
 
         Long userId = this.sessionManager.getUserIdFromSession(sessionId);
         this.sessionManager.endSession(sessionId);
-        this.usersRepo.deleteById(userId);
         this.participantsRepository.deleteAllByUserId(userId);
+        this.usersRepo.deleteById(userId);
         return ServiceResultFactory.userDeleted();
     }
 }
