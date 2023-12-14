@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface ParticipantsRepository extends JpaRepository<Participant, EventParticipantId> {
     @Transactional
     @Modifying
@@ -17,4 +19,8 @@ public interface ParticipantsRepository extends JpaRepository<Participant, Event
     @Modifying
     @Query("DELETE FROM Participant participant WHERE participant.id.eventId = :eventId")
     void deleteAllByEventId(Long eventId);
+
+    @Transactional
+    @Query("SELECT participant.id.userId FROM Participant participant WHERE participant.id.eventId = :eventId")
+    List<Long> findAllByEventId(Long eventId);
 }

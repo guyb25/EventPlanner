@@ -1,6 +1,9 @@
 package com.eventPlanner.models.serviceResult;
 
+import com.eventPlanner.models.dtos.events.EventDataDto;
 import org.springframework.http.HttpStatus;
+
+import java.util.List;
 
 public class ServiceResultFactory {
     public static ServiceResult usernameTaken() {
@@ -52,5 +55,9 @@ public class ServiceResultFactory {
 
     public static ServiceResult eventNotFound(Long eventId) {
         return new ServiceResult("Event not found: " + eventId, HttpStatus.NOT_FOUND);
+    }
+
+    public static ServiceResult eventDataList(List<EventDataDto> eventDataDtoList) {
+        return new ServiceResult(eventDataDtoList, HttpStatus.OK);
     }
 }

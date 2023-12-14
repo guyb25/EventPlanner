@@ -4,6 +4,7 @@ import com.eventPlanner.dataAccess.sessions.SessionManager;
 import com.eventPlanner.dataAccess.userEvents.EventRepository;
 import com.eventPlanner.dataAccess.userEvents.ParticipantsRepository;
 import com.eventPlanner.dataAccess.userEvents.UserRepository;
+import com.eventPlanner.models.dtos.events.EventDataDto;
 import com.eventPlanner.models.schemas.Event;
 import com.eventPlanner.models.schemas.Participant;
 import com.eventPlanner.models.serviceResult.ServiceResult;
@@ -46,7 +47,7 @@ public class EventService {
         event = eventRepository.save(event);
 
         for (String participant : participants) {
-            Long participantId = userRepository.getUserByName(participant).getId();
+            Long participantId = userRepository.findUserByName(participant).getId();
             Participant eventParticipant = new Participant(event.getId(), participantId);
             participantsRepository.save(eventParticipant);
         }
@@ -74,5 +75,35 @@ public class EventService {
         eventRepository.deleteById(id);
         participantsRepository.deleteAllByEventId(id);
         return ServiceResultFactory.eventDeleted();
+    }
+
+    public ServiceResult GetOwnedEvents(String sessionId) {
+        if (sessionManager.missing(sessionId)) {
+            return ServiceResultFactory.invalidSession();
+        }
+
+        Long userId = sessionManager.getUserIdFromSession(sessionId);
+        String host = userRepository.getReferenceById(userId).getName();
+        List<Event> ownedEvents = eventRepository.findEventsByHostId(userId);
+        List<EventDataDto> eventDataDtoList = new ArrayList<>();
+
+        for (Event event : ownedEvents) {
+            eventDataDtoList.add(BuildEventDataDto(event, host));
+        }
+
+        return ServiceResultFactory.eventDataList(eventDataDtoList);
+    }
+
+    private EventDataDto BuildEventDataDto(Event event, String host) {
+
+        List<Long> participantsIds = participantsRepository.findAllByEventId(event.getId());
+        List<String> participantsNames = new ArrayList<>();
+
+        for (Long participantId : participantsIds) {
+            participantsNames.add(userRepository.findUserById(participantId).getName());
+        }
+
+        return (new EventDataDto(event.getId(), event.getName(), host, event.getDescription(),
+                event.getLocation(), event.getTime(), event.getCreationTime(), participantsNames));
     }
 }

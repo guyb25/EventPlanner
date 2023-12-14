@@ -1,11 +1,15 @@
 package com.eventPlanner.endpoints.events;
 
 import com.eventPlanner.models.dtos.events.EventCreationDto;
+import com.eventPlanner.models.dtos.events.EventDataDto;
 import com.eventPlanner.models.dtos.events.EventDeletionDto;
+import com.eventPlanner.models.dtos.events.OwnedEventsRequestDto;
 import com.eventPlanner.models.serviceResult.ServiceResult;
 import com.eventPlanner.models.serviceResult.ServiceResultFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class EventServiceProxy {
@@ -35,5 +39,9 @@ public class EventServiceProxy {
 
     public ServiceResult<String> DeleteEvent(EventDeletionDto eventDeletionDto) {
         return eventService.DeleteEvent(eventDeletionDto.eventId(), eventDeletionDto.sessionId());
+    }
+
+    public ServiceResult<List<EventDataDto>> GetOwnedEvents(OwnedEventsRequestDto ownedEventsRequestDto) {
+        return eventService.GetOwnedEvents(ownedEventsRequestDto.sessionId());
     }
 }

@@ -42,7 +42,7 @@ public class AccountService {
             return ServiceResultFactory.wrongUsernameOrPassword();
         }
 
-        Long userId = this.usersRepo.getUserByName(name).getId();
+        Long userId = this.usersRepo.findUserByName(name).getId();
         String sessionId = this.sessionManager.createSession(userId);
         return ServiceResultFactory.sessionCreated(sessionId);
     }

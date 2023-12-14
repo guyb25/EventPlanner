@@ -37,4 +37,24 @@ public class Event {
     public Long getHostId() {
         return hostId;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public LocalDateTime getTime() {
+        return time;
+    }
+
+    public LocalDateTime getCreationTime() {
+        return creationTime;
+    }
 }
