@@ -1,18 +1,18 @@
-package com.eventPlanner.models.serviceResult;
+package com.eventPlanner.models.serviceResponse;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-public class ServiceResult<T> {
+public class serviceResponse<T> {
     private T message;
     private final HttpStatus httpStatus;
 
-    public ServiceResult(T message, HttpStatus httpStatus) {
+    public serviceResponse(T message, HttpStatus httpStatus) {
         this.message = message;
         this.httpStatus = httpStatus;
     }
 
-    public ServiceResult(HttpStatus httpStatus) {
+    public serviceResponse(HttpStatus httpStatus) {
         this.httpStatus = httpStatus;
     }
 

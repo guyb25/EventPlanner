@@ -7,9 +7,8 @@ import com.eventPlanner.dataAccess.userEvents.UserRepository;
 import com.eventPlanner.models.dtos.events.EventDataDto;
 import com.eventPlanner.models.schemas.Event;
 import com.eventPlanner.models.schemas.Participant;
-import com.eventPlanner.models.serviceResult.ServiceResult;
-import com.eventPlanner.models.serviceResult.factories.GeneralResponseFactory;
-import com.eventPlanner.models.serviceResult.factories.ResponseFactory;
+import com.eventPlanner.models.serviceResponse.serviceResponse;
+import com.eventPlanner.models.serviceResponse.factories.ResponseFactory;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +35,7 @@ public class EventService {
     }
 
     @Transactional
-    public ServiceResult createEvent(String name, String sessionId, String description, String location, LocalDateTime time, List<String> participants) {
+    public serviceResponse createEvent(String name, String sessionId, String description, String location, LocalDateTime time, List<String> participants) {
         if (sessionManager.missing(sessionId)) {
             return responseFactory.session().invalidSession();
         }
@@ -60,7 +59,7 @@ public class EventService {
     }
 
     @Transactional
-    public ServiceResult deleteEvent(Long id, String sessionId) {
+    public serviceResponse deleteEvent(Long id, String sessionId) {
         if (sessionManager.missing(sessionId)) {
             return responseFactory.session().invalidSession();
         }
@@ -81,7 +80,7 @@ public class EventService {
         return responseFactory.event().eventDeleted();
     }
 
-    public ServiceResult getOwnedEvents(String sessionId) {
+    public serviceResponse getOwnedEvents(String sessionId) {
         if (sessionManager.missing(sessionId)) {
             return responseFactory.session().invalidSession();
         }
@@ -98,7 +97,7 @@ public class EventService {
         return responseFactory.event().eventDataList(eventDataDtoList);
     }
 
-    public ServiceResult getAuthorizedEvents(String sessionId) {
+    public serviceResponse getAuthorizedEvents(String sessionId) {
         if (sessionManager.missing(sessionId)) {
             return responseFactory.session().invalidSession();
         }
@@ -116,7 +115,7 @@ public class EventService {
         return responseFactory.event().eventDataList(eventDataDtoList);
     }
 
-    public ServiceResult getSpecificEvent(String sessionId, Long eventId) {
+    public serviceResponse getSpecificEvent(String sessionId, Long eventId) {
         if (sessionManager.missing(sessionId)) {
             return responseFactory.session().invalidSession();
         }
@@ -134,8 +133,8 @@ public class EventService {
     }
 
     @Transactional
-    public ServiceResult updateSpecificEvent(String sessionId, Long eventId, String name, String description,
-                                             String location, LocalDateTime time, List<String> participants) {
+    public serviceResponse updateSpecificEvent(String sessionId, Long eventId, String name, String description,
+                                               String location, LocalDateTime time, List<String> participants) {
         if (sessionManager.missing(sessionId)) {
             return responseFactory.session().invalidSession();
         }

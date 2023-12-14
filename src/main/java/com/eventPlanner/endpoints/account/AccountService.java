@@ -4,9 +4,8 @@ import com.eventPlanner.dataAccess.userEvents.ParticipantsRepository;
 import com.eventPlanner.dataAccess.userEvents.UserRepository;
 import com.eventPlanner.dataAccess.sessions.SessionManager;
 import com.eventPlanner.models.schemas.User;
-import com.eventPlanner.models.serviceResult.ServiceResult;
-import com.eventPlanner.models.serviceResult.factories.GeneralResponseFactory;
-import com.eventPlanner.models.serviceResult.factories.ResponseFactory;
+import com.eventPlanner.models.serviceResponse.serviceResponse;
+import com.eventPlanner.models.serviceResponse.factories.ResponseFactory;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,7 @@ public class AccountService {
         this.responseFactory = responseFactory;
     }
 
-    public ServiceResult createAccount(String name, String password, String email) {
+    public serviceResponse createAccount(String name, String password, String email) {
         if (this.usersRepo.existsUserByName(name)) {
             return responseFactory.account().usernameTaken();
         }
@@ -41,7 +40,7 @@ public class AccountService {
         return responseFactory.account().userCreated();
     }
 
-    public ServiceResult loginAccount(String name, String password) {
+    public serviceResponse loginAccount(String name, String password) {
         if (!this.usersRepo.existsByNameAndPassword(name, password)) {
             return responseFactory.account().wrongUsernameOrPassword();
         }
@@ -51,7 +50,7 @@ public class AccountService {
         return responseFactory.session().sessionCreated(sessionId);
     }
 
-    public ServiceResult logoutAccount(String sessionId) {
+    public serviceResponse logoutAccount(String sessionId) {
         if (this.sessionManager.missing(sessionId)) {
             return responseFactory.session().invalidSession();
         }
@@ -61,7 +60,7 @@ public class AccountService {
     }
 
     @Transactional
-    public ServiceResult deleteAccount(String sessionId) {
+    public serviceResponse deleteAccount(String sessionId) {
         if (this.sessionManager.missing(sessionId)) {
             return responseFactory.session().invalidSession();
         }

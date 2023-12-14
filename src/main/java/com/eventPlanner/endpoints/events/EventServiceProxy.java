@@ -1,9 +1,8 @@
 package com.eventPlanner.endpoints.events;
 
 import com.eventPlanner.models.dtos.events.*;
-import com.eventPlanner.models.serviceResult.ServiceResult;
-import com.eventPlanner.models.serviceResult.factories.GeneralResponseFactory;
-import com.eventPlanner.models.serviceResult.factories.ResponseFactory;
+import com.eventPlanner.models.serviceResponse.serviceResponse;
+import com.eventPlanner.models.serviceResponse.factories.ResponseFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +19,7 @@ public class EventServiceProxy {
         this.responseFactory = responseFactory;
     }
 
-    public ServiceResult<String> createEvent(CreateEventDto createEventDto) {
+    public serviceResponse<String> createEvent(CreateEventDto createEventDto) {
         try {
             return eventService.createEvent(
                     createEventDto.name(),
@@ -37,23 +36,23 @@ public class EventServiceProxy {
         }
     }
 
-    public ServiceResult<String> deleteEvent(DeleteEventDto deleteEventDto) {
+    public serviceResponse<String> deleteEvent(DeleteEventDto deleteEventDto) {
         return eventService.deleteEvent(deleteEventDto.eventId(), deleteEventDto.sessionId());
     }
 
-    public ServiceResult<List<EventDataDto>> getOwnedEvents(RequestOwnedEventsDto requestOwnedEventsDto) {
+    public serviceResponse<List<EventDataDto>> getOwnedEvents(RequestOwnedEventsDto requestOwnedEventsDto) {
         return eventService.getOwnedEvents(requestOwnedEventsDto.sessionId());
     }
 
-    public ServiceResult<List<EventDataDto>> getAuthorizedEvents(RequestAuthorizedEventsDto requestAuthorizedEventsDto) {
+    public serviceResponse<List<EventDataDto>> getAuthorizedEvents(RequestAuthorizedEventsDto requestAuthorizedEventsDto) {
         return eventService.getAuthorizedEvents(requestAuthorizedEventsDto.sessionId());
     }
 
-    public ServiceResult<EventDataDto> getSpecificEvent(RequestSpecificEventDto requestSpecificEventDto) {
+    public serviceResponse<EventDataDto> getSpecificEvent(RequestSpecificEventDto requestSpecificEventDto) {
         return eventService.getSpecificEvent(requestSpecificEventDto.sessionId(), requestSpecificEventDto.eventId());
     }
 
-    public ServiceResult<String> updateSpecificEvent(UpdateEventDto updateEventDto) {
+    public serviceResponse<String> updateSpecificEvent(UpdateEventDto updateEventDto) {
         return eventService.updateSpecificEvent(
                 updateEventDto.sessionId(),
                 updateEventDto.eventId(),
