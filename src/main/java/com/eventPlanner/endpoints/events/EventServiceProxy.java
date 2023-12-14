@@ -34,6 +34,6 @@ public class EventServiceProxy {
     }
 
     public ServiceResult<String> DeleteEvent(EventDeletionDto eventDeletionDto) {
-        return eventService.DeleteEvent(eventDeletionDto.eventId());
+        return eventService.DeleteEvent(eventDeletionDto.eventId(), eventDeletionDto.sessionId());
     }
 }

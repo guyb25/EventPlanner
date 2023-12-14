@@ -45,4 +45,12 @@ public class ServiceResultFactory {
     public static ServiceResult eventDeleted() {
         return new ServiceResult("Event deleted.", HttpStatus.OK);
     }
+
+    public static ServiceResult unauthorized() {
+        return new ServiceResult("Unauthorized.", HttpStatus.UNAUTHORIZED);
+    }
+
+    public static ServiceResult eventNotFound(Long eventId) {
+        return new ServiceResult("Event not found: " + eventId, HttpStatus.NOT_FOUND);
+    }
 }

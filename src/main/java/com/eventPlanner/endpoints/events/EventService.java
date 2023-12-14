@@ -55,7 +55,22 @@ public class EventService {
     }
 
     @Transactional
-    public ServiceResult DeleteEvent(Long id) {
+    public ServiceResult DeleteEvent(Long id, String sessionId) {
+        if (sessionManager.missing(sessionId)) {
+            return ServiceResultFactory.invalidSession();
+        }
+
+        Long userId = sessionManager.getUserIdFromSession(sessionId);
+        Event event = eventRepository.findEventById(id);
+
+        if (event == null) {
+            return ServiceResultFactory.eventNotFound(id);
+        }
+
+        if (!event.getHostId().equals(userId)) {
+            return ServiceResultFactory.unauthorized();
+        }
+
         eventRepository.deleteById(id);
         participantsRepository.deleteAllByEventId(id);
         return ServiceResultFactory.eventDeleted();

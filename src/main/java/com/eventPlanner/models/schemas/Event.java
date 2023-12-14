@@ -33,4 +33,8 @@ public class Event {
     public Long getId() {
         return id;
     }
+
+    public Long getHostId() {
+        return hostId;
+    }
 }

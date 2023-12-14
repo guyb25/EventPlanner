@@ -1,4 +1,4 @@
 package com.eventPlanner.models.dtos.events;
 
-public record EventDeletionDto(Long eventId) {
+public record EventDeletionDto(Long eventId, String sessionId) {
 }
