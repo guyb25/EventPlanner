@@ -25,4 +25,10 @@ public interface ParticipantsRepository extends JpaRepository<Participant, Event
 
     @Query("SELECT participant.id.eventId FROM Participant participant WHERE participant.id.userId = :userId")
     List<Long> findAllByUserId(Long userId);
+
+    @Query("SELECT event.id FROM Event event " +
+            "INNER JOIN Participant participant ON event.id = participant.id.eventId " +
+            "INNER JOIN User user ON participant.id.userId = user.id " +
+            "WHERE user.id = :userId AND event.location = :location")
+    List<Long> findAllByUserIdAndLocation(Long userId, String location);
 }

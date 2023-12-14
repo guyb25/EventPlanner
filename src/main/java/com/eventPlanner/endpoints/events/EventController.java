@@ -48,4 +48,9 @@ public class EventController {
     public ResponseEntity<String> updateSpecificEvent(UpdateEventDto updateEventDto) {
         return eventServiceProxy.updateSpecificEvent(updateEventDto).toResponse();
     }
+
+    @PostMapping("/retrieve/location")
+    public ResponseEntity<List<EventDataDto>> retrieveLocationEvents(RequestLocationEventsDto requestLocationEventsDto) {
+        return eventServiceProxy.getLocationEvents(requestLocationEventsDto).toResponse();
+    }
 }
