@@ -17,15 +17,15 @@ public class EventServiceProxy {
         this.eventService = eventService;
     }
 
-    public ServiceResult<String> createEvent(EventCreationDto eventCreationDto) {
+    public ServiceResult<String> createEvent(CreateEventDto createEventDto) {
         try {
             return eventService.createEvent(
-                    eventCreationDto.name(),
-                    eventCreationDto.sessionId(),
-                    eventCreationDto.description(),
-                    eventCreationDto.location(),
-                    eventCreationDto.time(),
-                    eventCreationDto.participants()
+                    createEventDto.name(),
+                    createEventDto.sessionId(),
+                    createEventDto.description(),
+                    createEventDto.location(),
+                    createEventDto.time(),
+                    createEventDto.participants()
             );
         }
 
@@ -34,31 +34,31 @@ public class EventServiceProxy {
         }
     }
 
-    public ServiceResult<String> deleteEvent(EventDeletionDto eventDeletionDto) {
-        return eventService.deleteEvent(eventDeletionDto.eventId(), eventDeletionDto.sessionId());
+    public ServiceResult<String> deleteEvent(DeleteEventDto deleteEventDto) {
+        return eventService.deleteEvent(deleteEventDto.eventId(), deleteEventDto.sessionId());
     }
 
-    public ServiceResult<List<EventDataDto>> getOwnedEvents(OwnedEventsRequestDto ownedEventsRequestDto) {
-        return eventService.getOwnedEvents(ownedEventsRequestDto.sessionId());
+    public ServiceResult<List<EventDataDto>> getOwnedEvents(RequestOwnedEventsDto requestOwnedEventsDto) {
+        return eventService.getOwnedEvents(requestOwnedEventsDto.sessionId());
     }
 
-    public ServiceResult<List<EventDataDto>> getAuthorizedEvents(AuthorizedEventsRequestDto authorizedEventsRequestDto) {
-        return eventService.getAuthorizedEvents(authorizedEventsRequestDto.sessionId());
+    public ServiceResult<List<EventDataDto>> getAuthorizedEvents(RequestAuthorizedEventsDto requestAuthorizedEventsDto) {
+        return eventService.getAuthorizedEvents(requestAuthorizedEventsDto.sessionId());
     }
 
-    public ServiceResult<EventDataDto> getSpecificEvent(SpecificEventRequestDto specificEventRequestDto) {
-        return eventService.getSpecificEvent(specificEventRequestDto.sessionId(), specificEventRequestDto.eventId());
+    public ServiceResult<EventDataDto> getSpecificEvent(RequestSpecificEventDto requestSpecificEventDto) {
+        return eventService.getSpecificEvent(requestSpecificEventDto.sessionId(), requestSpecificEventDto.eventId());
     }
 
-    public ServiceResult<String> updateSpecificEvent(EventUpdateDto eventUpdateDto) {
+    public ServiceResult<String> updateSpecificEvent(UpdateEventDto updateEventDto) {
         return eventService.updateSpecificEvent(
-                eventUpdateDto.sessionId(),
-                eventUpdateDto.eventId(),
-                eventUpdateDto.name(),
-                eventUpdateDto.description(),
-                eventUpdateDto.location(),
-                eventUpdateDto.time(),
-                eventUpdateDto.participants()
+                updateEventDto.sessionId(),
+                updateEventDto.eventId(),
+                updateEventDto.name(),
+                updateEventDto.description(),
+                updateEventDto.location(),
+                updateEventDto.time(),
+                updateEventDto.participants()
         );
     }
 }

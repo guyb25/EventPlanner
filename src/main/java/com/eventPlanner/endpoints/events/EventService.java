@@ -53,17 +53,6 @@ public class EventService {
         return ServiceResultFactory.eventCreatedSuccessfully(event.getId());
     }
 
-    private List<Participant> buildParticipantsList(List<String> users, Long eventId) {
-        List<Participant> participants = new ArrayList<>();
-
-        for (String user : users) {
-            Long participantId = userRepository.findUserByName(user).getId();
-            participants.add(new Participant(eventId, participantId));
-        }
-
-        return participants;
-    }
-
     @Transactional
     public ServiceResult deleteEvent(Long id, String sessionId) {
         if (sessionManager.missing(sessionId)) {
@@ -187,5 +176,17 @@ public class EventService {
 
         return (new EventDataDto(event.getId(), event.getName(), host, event.getDescription(),
                 event.getLocation(), event.getTime(), event.getCreationTime(), participantsNames));
+    }
+
+
+    private List<Participant> buildParticipantsList(List<String> users, Long eventId) {
+        List<Participant> participants = new ArrayList<>();
+
+        for (String user : users) {
+            Long participantId = userRepository.findUserByName(user).getId();
+            participants.add(new Participant(eventId, participantId));
+        }
+
+        return participants;
     }
 }

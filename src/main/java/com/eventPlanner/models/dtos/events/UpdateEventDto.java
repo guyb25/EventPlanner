@@ -5,11 +5,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record EventCreationDto(
-        String name,
+public record UpdateEventDto(
         String sessionId,
+        Long eventId,
+        String name,
         String description,
         String location,
-        @Schema(type = "string", example = "2023-12-14T09:03:32") LocalDateTime time,
-        List<String> participants) {
-}
+        @Schema(type = "string", example = "2023-12-14T09:03:32")LocalDateTime time,
+        List<String> participants
+){}
