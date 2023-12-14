@@ -8,8 +8,8 @@ import com.eventPlanner.models.dtos.events.EventDataDto;
 import com.eventPlanner.models.schemas.Event;
 import com.eventPlanner.models.schemas.Participant;
 import com.eventPlanner.models.serviceResult.ServiceResult;
-import com.eventPlanner.models.serviceResult.ServiceResultFactory;
-import jakarta.servlet.http.Part;
+import com.eventPlanner.models.serviceResult.factories.GeneralResponseFactory;
+import com.eventPlanner.models.serviceResult.factories.ResponseFactory;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,17 +24,23 @@ public class EventService {
     private final ParticipantsRepository participantsRepository;
     private final UserRepository userRepository;
     private final SessionManager sessionManager;
+    private final ResponseFactory responseFactory;
 
     @Autowired
-    public EventService(EventRepository eventRepository, ParticipantsRepository participantsRepository, UserRepository userRepository, SessionManager sessionManager) {
+    public EventService(EventRepository eventRepository, ParticipantsRepository participantsRepository, UserRepository userRepository, SessionManager sessionManager, ResponseFactory responseFactory) {
         this.eventRepository = eventRepository;
         this.participantsRepository = participantsRepository;
         this.userRepository = userRepository;
         this.sessionManager = sessionManager;
+        this.responseFactory = responseFactory;
     }
 
     @Transactional
     public ServiceResult createEvent(String name, String sessionId, String description, String location, LocalDateTime time, List<String> participants) {
+        if (sessionManager.missing(sessionId)) {
+            return responseFactory.session().invalidSession();
+        }
+
         Long hostId = sessionManager.getUserIdFromSession(sessionId);
         Event event = new Event(name, hostId, description, location, time, LocalDateTime.now());
 
@@ -50,34 +56,34 @@ public class EventService {
         List<Participant> participantList = buildParticipantsList(participants, event.getId());
         participantsRepository.saveAll(participantList);
 
-        return ServiceResultFactory.eventCreatedSuccessfully(event.getId());
+        return responseFactory.event().eventCreatedSuccessfully(event.getId());
     }
 
     @Transactional
     public ServiceResult deleteEvent(Long id, String sessionId) {
         if (sessionManager.missing(sessionId)) {
-            return ServiceResultFactory.invalidSession();
+            return responseFactory.session().invalidSession();
         }
 
         Long userId = sessionManager.getUserIdFromSession(sessionId);
         Event event = eventRepository.findEventById(id);
 
         if (event == null) {
-            return ServiceResultFactory.eventNotFound(id);
+            return responseFactory.event().eventNotFound(id);
         }
 
         if (!event.getHostId().equals(userId)) {
-            return ServiceResultFactory.unauthorized();
+            return responseFactory.general().unauthorized();
         }
 
         eventRepository.deleteById(id);
         participantsRepository.deleteAllByEventId(id);
-        return ServiceResultFactory.eventDeleted();
+        return responseFactory.event().eventDeleted();
     }
 
     public ServiceResult getOwnedEvents(String sessionId) {
         if (sessionManager.missing(sessionId)) {
-            return ServiceResultFactory.invalidSession();
+            return responseFactory.session().invalidSession();
         }
 
         Long userId = sessionManager.getUserIdFromSession(sessionId);
@@ -89,12 +95,12 @@ public class EventService {
             eventDataDtoList.add(buildEventDataDto(event, host));
         }
 
-        return ServiceResultFactory.eventDataList(eventDataDtoList);
+        return responseFactory.event().eventDataList(eventDataDtoList);
     }
 
     public ServiceResult getAuthorizedEvents(String sessionId) {
         if (sessionManager.missing(sessionId)) {
-            return ServiceResultFactory.invalidSession();
+            return responseFactory.session().invalidSession();
         }
 
         Long userId = sessionManager.getUserIdFromSession(sessionId);
@@ -107,12 +113,12 @@ public class EventService {
             eventDataDtoList.add(buildEventDataDto(event, host));
         }
 
-        return ServiceResultFactory.eventDataList(eventDataDtoList);
+        return responseFactory.event().eventDataList(eventDataDtoList);
     }
 
     public ServiceResult getSpecificEvent(String sessionId, Long eventId) {
         if (sessionManager.missing(sessionId)) {
-            return ServiceResultFactory.invalidSession();
+            return responseFactory.session().invalidSession();
         }
 
         Long userId = sessionManager.getUserIdFromSession(sessionId);
@@ -120,25 +126,25 @@ public class EventService {
         List<Long> participants = participantsRepository.findAllByEventId(eventId);
 
         if (!event.getHostId().equals(userId) && !participants.contains(userId)) {
-            return ServiceResultFactory.unauthorized();
+            return responseFactory.general().unauthorized();
         }
 
         String host = userRepository.getReferenceById(userId).getName();
-        return ServiceResultFactory.eventData(buildEventDataDto(event, host));
+        return responseFactory.event().eventData(buildEventDataDto(event, host));
     }
 
     @Transactional
     public ServiceResult updateSpecificEvent(String sessionId, Long eventId, String name, String description,
                                              String location, LocalDateTime time, List<String> participants) {
         if (sessionManager.missing(sessionId)) {
-            return ServiceResultFactory.invalidSession();
+            return responseFactory.session().invalidSession();
         }
 
         Long userId = sessionManager.getUserIdFromSession(sessionId);
         Event event = eventRepository.findEventById(eventId);
 
         if (!event.getHostId().equals(userId)) {
-            return ServiceResultFactory.unauthorized();
+            return responseFactory.general().unauthorized();
         }
 
         if (name != null) {
@@ -163,7 +169,7 @@ public class EventService {
             participantsRepository.saveAll(participantList);
         }
 
-        return ServiceResultFactory.success();
+        return responseFactory.general().success();
     }
 
     private EventDataDto buildEventDataDto(Event event, String host) {

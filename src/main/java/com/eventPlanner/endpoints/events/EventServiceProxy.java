@@ -2,7 +2,8 @@ package com.eventPlanner.endpoints.events;
 
 import com.eventPlanner.models.dtos.events.*;
 import com.eventPlanner.models.serviceResult.ServiceResult;
-import com.eventPlanner.models.serviceResult.ServiceResultFactory;
+import com.eventPlanner.models.serviceResult.factories.GeneralResponseFactory;
+import com.eventPlanner.models.serviceResult.factories.ResponseFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +12,12 @@ import java.util.List;
 @Service
 public class EventServiceProxy {
     private final EventService eventService;
+    private final ResponseFactory responseFactory;
 
     @Autowired
-    public EventServiceProxy(EventService eventService) {
+    public EventServiceProxy(EventService eventService, ResponseFactory responseFactory) {
         this.eventService = eventService;
+        this.responseFactory = responseFactory;
     }
 
     public ServiceResult<String> createEvent(CreateEventDto createEventDto) {
@@ -30,7 +33,7 @@ public class EventServiceProxy {
         }
 
         catch (IllegalArgumentException e) {
-            return ServiceResultFactory.userNotFound(e.getMessage());
+            return responseFactory.account().userNotFound(e.getMessage());
         }
     }
 
