@@ -27,7 +27,7 @@ public class EventController {
         return eventServiceProxy.createEvent(eventCreationDto).toResponse();
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete/specific")
     public ResponseEntity<String> deleteEvent(EventDeletionDto eventDeletionDto) {
         return eventServiceProxy.deleteEvent(eventDeletionDto).toResponse();
     }
