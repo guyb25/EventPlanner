@@ -1,9 +1,8 @@
 package com.eventPlanner.endpoints.events.eventService;
 
-import com.eventPlanner.models.dtos.events.EventDataDto;
+import com.eventPlanner.dummyBuilders.RandomValueGenerator;
 import com.eventPlanner.models.dtos.events.RequestOwnedEventsDto;
 import org.junit.jupiter.api.Test;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,18 +27,9 @@ public class GetOwnedEventsTest extends BaseEventServiceTest {
     @Test
     public void testGetOwnedEvents_ValidSession_ReturnOwnedEvents() {
         // Arrange
-        var userId = 50L;
-        var eventDummy = eventDummyBuilder.generate().build();
-        var eventDataDto = new EventDataDto(
-                eventDummy.getId(),
-                eventDummy.getName(),
-                "hostname",
-                eventDummy.getDescription(),
-                eventDummy.getLocation(),
-                eventDummy.getTime(),
-                eventDummy.getCreationTime(),
-                new ArrayList<>());
-
+        var userId = RandomValueGenerator.randomUniqueLong();
+        var eventDummy = eventDummyBuilder.generate().withHostId(userId).build();
+        var eventDataDto = eventDtoDummyBuilder.fromEvent(eventDummy).withHost(RandomValueGenerator.randomUniqueString()).build();
         var eventDataList = List.of(eventDataDto);
 
         var expectedResponse = responseProvider.event().eventDataList(eventDataList);
@@ -47,6 +37,7 @@ public class GetOwnedEventsTest extends BaseEventServiceTest {
         when(sessionManager.getUserIdFromSession(requestOwnedEventsDto.sessionId())).thenReturn(userId);
         when(userDataService.tryGetUsernameById(userId)).thenReturn(eventDataDto.host());
         when(eventDataService.findEventsByHostId(userId)).thenReturn(List.of(eventDummy));
+        when(participantDataService.findEventParticipantsNames(eventDummy.getId())).thenReturn(eventDataDto.participants());
 
         // Act
         var actualResponse = eventService.getOwnedEvents(requestOwnedEventsDto);

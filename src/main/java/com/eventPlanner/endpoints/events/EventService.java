@@ -88,11 +88,10 @@ public class EventService {
         }
 
         Long userId = sessionManager.getUserIdFromSession(requestOwnedEventsDto.sessionId());
-        String host = userDataService.tryGetUsernameById(userId);
         List<Event> ownedEvents = eventDataService.findEventsByHostId(userId);
         List<EventDataDto> eventDataDtoList = ownedEvents
                 .stream()
-                .map(event -> buildEventDataDto(event, host))
+                .map(this::buildEventDataDto)
                 .toList();
 
         return responseProvider.event().eventDataList(eventDataDtoList);
@@ -104,10 +103,9 @@ public class EventService {
         }
 
         Long userId = sessionManager.getUserIdFromSession(requestAuthorizedEventsDto.sessionId());
-        String host = userDataService.tryGetUsernameById(userId);
 
         var events = eventDataService.findUserEventsSorted(userId, requestAuthorizedEventsDto.eventSortMethod());
-        List<EventDataDto> eventDataDtoList = events.stream().map(event -> buildEventDataDto(event, host)).toList();
+        List<EventDataDto> eventDataDtoList = events.stream().map(this::buildEventDataDto).toList();
 
         return responseProvider.event().eventDataList(eventDataDtoList);
     }
@@ -133,8 +131,7 @@ public class EventService {
             return responseProvider.general().unauthorized();
         }
 
-        String host = userDataService.tryGetUsernameById(hostId);
-        return responseProvider.event().eventData(buildEventDataDto(event, host));
+        return responseProvider.event().eventData(buildEventDataDto(event));
     }
 
     @Transactional
@@ -169,18 +166,18 @@ public class EventService {
         }
 
         Long userId = sessionManager.getUserIdFromSession(requestLocationEventsDto.sessionId());
-        String host = userDataService.tryGetUsernameById(userId);
         List<Event> events = eventDataService.findAllEventsByUserIdAndLocation(userId, requestLocationEventsDto.location());
         List<EventDataDto> eventDataDtoList = events
                 .stream()
-                .map(event -> buildEventDataDto(event, host))
+                .map(this::buildEventDataDto)
                 .toList();
 
         return responseProvider.event().eventDataList(eventDataDtoList);
     }
 
-    private EventDataDto buildEventDataDto(Event event, String host) {
+    private EventDataDto buildEventDataDto(Event event) {
         var participantsNames = participantDataService.findEventParticipantsNames(event.getId());
+        var host = userDataService.tryGetUsernameById(event.getHostId());
 
         return (new EventDataDto(event.getId(), event.getName(), host, event.getDescription(),
                 event.getLocation(), event.getTime(), event.getCreationTime(), participantsNames));
