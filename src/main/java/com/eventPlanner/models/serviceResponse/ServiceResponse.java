@@ -21,4 +21,12 @@ public class ServiceResponse<T> {
                 ResponseEntity.status(httpStatus).build() :
                 ResponseEntity.status(httpStatus).body(message);
     }
+
+    public T getMessage() {
+        return message;
+    }
+
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
+    }
 }

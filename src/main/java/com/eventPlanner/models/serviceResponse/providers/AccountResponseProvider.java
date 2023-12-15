@@ -1,11 +1,11 @@
-package com.eventPlanner.models.serviceResponse.factories;
+package com.eventPlanner.models.serviceResponse.providers;
 
 import com.eventPlanner.models.serviceResponse.ServiceResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AccountResponseFactory {
+public class AccountResponseProvider {
     public ServiceResponse usernameTaken() {
         return new ServiceResponse("Username is already taken", HttpStatus.CONFLICT);
     }

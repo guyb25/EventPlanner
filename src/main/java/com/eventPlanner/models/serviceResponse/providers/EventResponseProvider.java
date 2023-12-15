@@ -1,4 +1,4 @@
-package com.eventPlanner.models.serviceResponse.factories;
+package com.eventPlanner.models.serviceResponse.providers;
 
 import com.eventPlanner.models.dtos.events.EventDataDto;
 import com.eventPlanner.models.serviceResponse.ServiceResponse;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class EventResponseFactory {
+public class EventResponseProvider {
     public ServiceResponse eventCreatedSuccessfully(Long eventId) {
         return new ServiceResponse("Event created successfully, event id: " + eventId, HttpStatus.CREATED);
     }

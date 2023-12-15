@@ -8,7 +8,7 @@ import com.eventPlanner.models.dtos.events.EventDataDto;
 import com.eventPlanner.models.schemas.Event;
 import com.eventPlanner.models.schemas.Participant;
 import com.eventPlanner.models.serviceResponse.ServiceResponse;
-import com.eventPlanner.models.serviceResponse.factories.ResponseFactory;
+import com.eventPlanner.models.serviceResponse.providers.ResponseProvider;
 import com.eventPlanner.models.types.EventSortMethod;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,27 +28,27 @@ public class EventService {
     private final ParticipantsRepository participantsRepository;
     private final UserRepository userRepository;
     private final SessionManager sessionManager;
-    private final ResponseFactory responseFactory;
+    private final ResponseProvider responseProvider;
 
     private final Map<EventSortMethod, Function<Long, List<Event>>> sortMethodFunctionMap = new HashMap<>();
 
     @Autowired
-    public EventService(EventRepository eventRepository, ParticipantsRepository participantsRepository, UserRepository userRepository, SessionManager sessionManager, ResponseFactory responseFactory) {
+    public EventService(EventRepository eventRepository, ParticipantsRepository participantsRepository, UserRepository userRepository, SessionManager sessionManager, ResponseProvider responseProvider) {
         this.eventRepository = eventRepository;
         this.participantsRepository = participantsRepository;
         this.userRepository = userRepository;
         this.sessionManager = sessionManager;
-        this.responseFactory = responseFactory;
+        this.responseProvider = responseProvider;
 
-        sortMethodFunctionMap.put(EventSortMethod.DATE, participantsRepository::findAllEventsByParticipantIdOrderByTime);
-        sortMethodFunctionMap.put(EventSortMethod.CREATION_TIME, participantsRepository::findAllEventsByParticipantIdOrderByCreationTime);
-        sortMethodFunctionMap.put(EventSortMethod.POPULARITY, participantsRepository::findAllEventsByParticipantIdOrderByPopularity);
+        sortMethodFunctionMap.put(EventSortMethod.DATE, eventRepository::findAllEventsByParticipantIdOrderByTime);
+        sortMethodFunctionMap.put(EventSortMethod.CREATION_TIME, eventRepository::findAllEventsByParticipantIdOrderByCreationTime);
+        sortMethodFunctionMap.put(EventSortMethod.POPULARITY, eventRepository::findAllEventsByParticipantIdOrderByPopularity);
     }
 
     @Transactional
     public ServiceResponse createEvent(String name, String sessionId, String description, String location, LocalDateTime time, List<String> participants) {
         if (sessionManager.missing(sessionId)) {
-            return responseFactory.session().invalidSession();
+            return responseProvider.session().invalidSession();
         }
 
         Long hostId = sessionManager.getUserIdFromSession(sessionId);
@@ -66,34 +66,34 @@ public class EventService {
         List<Participant> participantList = buildParticipantsList(participants, event.getId());
         participantsRepository.saveAll(participantList);
 
-        return responseFactory.event().eventCreatedSuccessfully(event.getId());
+        return responseProvider.event().eventCreatedSuccessfully(event.getId());
     }
 
     @Transactional
     public ServiceResponse deleteEvent(Long id, String sessionId) {
         if (sessionManager.missing(sessionId)) {
-            return responseFactory.session().invalidSession();
+            return responseProvider.session().invalidSession();
         }
 
         Long userId = sessionManager.getUserIdFromSession(sessionId);
         Event event = eventRepository.findEventById(id);
 
         if (event == null) {
-            return responseFactory.event().eventNotFound(id);
+            return responseProvider.event().eventNotFound(id);
         }
 
         if (!event.getHostId().equals(userId)) {
-            return responseFactory.general().unauthorized();
+            return responseProvider.general().unauthorized();
         }
 
         eventRepository.deleteById(id);
         participantsRepository.deleteAllByEventId(id);
-        return responseFactory.event().eventDeleted();
+        return responseProvider.event().eventDeleted();
     }
 
     public ServiceResponse getOwnedEvents(String sessionId) {
         if (sessionManager.missing(sessionId)) {
-            return responseFactory.session().invalidSession();
+            return responseProvider.session().invalidSession();
         }
 
         Long userId = sessionManager.getUserIdFromSession(sessionId);
@@ -101,29 +101,29 @@ public class EventService {
         List<Event> ownedEvents = eventRepository.findEventsByHostId(userId);
         List<EventDataDto> eventDataDtoList = ownedEvents.stream().map(event -> buildEventDataDto(event, host)).toList();
 
-        return responseFactory.event().eventDataList(eventDataDtoList);
+        return responseProvider.event().eventDataList(eventDataDtoList);
     }
 
     public ServiceResponse getAuthorizedEvents(String sessionId, EventSortMethod eventSortMethod) {
         if (sessionManager.missing(sessionId)) {
-            return responseFactory.session().invalidSession();
+            return responseProvider.session().invalidSession();
         }
 
         Long userId = sessionManager.getUserIdFromSession(sessionId);
         String host = userRepository.getReferenceById(userId).getName();
 
         List<Event> events = sortMethodFunctionMap
-                .getOrDefault(eventSortMethod, participantsRepository::findAllEventsByParticipantId)
+                .getOrDefault(eventSortMethod, eventRepository::findAllEventsByParticipantId)
                 .apply(userId);
 
         List<EventDataDto> eventDataDtoList = events.stream().map(event -> buildEventDataDto(event, host)).toList();
 
-        return responseFactory.event().eventDataList(eventDataDtoList);
+        return responseProvider.event().eventDataList(eventDataDtoList);
     }
 
     public ServiceResponse getSpecificEvent(String sessionId, Long eventId) {
         if (sessionManager.missing(sessionId)) {
-            return responseFactory.session().invalidSession();
+            return responseProvider.session().invalidSession();
         }
 
         Long userId = sessionManager.getUserIdFromSession(sessionId);
@@ -131,25 +131,25 @@ public class EventService {
         List<Long> participants = participantsRepository.findAllByEventId(eventId);
 
         if (!event.getHostId().equals(userId) && !participants.contains(userId)) {
-            return responseFactory.general().unauthorized();
+            return responseProvider.general().unauthorized();
         }
 
         String host = userRepository.getReferenceById(userId).getName();
-        return responseFactory.event().eventData(buildEventDataDto(event, host));
+        return responseProvider.event().eventData(buildEventDataDto(event, host));
     }
 
     @Transactional
     public ServiceResponse updateSpecificEvent(String sessionId, Long eventId, String name, String description,
                                                String location, LocalDateTime time, List<String> participants) {
         if (sessionManager.missing(sessionId)) {
-            return responseFactory.session().invalidSession();
+            return responseProvider.session().invalidSession();
         }
 
         Long userId = sessionManager.getUserIdFromSession(sessionId);
         Event event = eventRepository.findEventById(eventId);
 
         if (!event.getHostId().equals(userId)) {
-            return responseFactory.general().unauthorized();
+            return responseProvider.general().unauthorized();
         }
 
         updateIfNotNull(event::setName, name);
@@ -163,19 +163,19 @@ public class EventService {
             participantsRepository.saveAll(participantList);
         }
 
-        return responseFactory.general().success();
+        return responseProvider.general().success();
     }
 
     public ServiceResponse getLocationEvents(String sessionId, String location) {
         if (sessionManager.missing(sessionId)) {
-            return responseFactory.session().invalidSession();
+            return responseProvider.session().invalidSession();
         }
 
         Long userId = sessionManager.getUserIdFromSession(sessionId);
         String host = userRepository.getReferenceById(userId).getName();
-        List<Event> events = participantsRepository.findAllEventsByUserIdAndLocation(userId, location);
+        List<Event> events = eventRepository.findAllEventsByUserIdAndLocation(userId, location);
         List<EventDataDto> eventDataDtoList = events.stream().map(event -> buildEventDataDto(event, host)).toList();
-        return responseFactory.event().eventDataList(eventDataDtoList);
+        return responseProvider.event().eventDataList(eventDataDtoList);
     }
 
     private EventDataDto buildEventDataDto(Event event, String host) {
