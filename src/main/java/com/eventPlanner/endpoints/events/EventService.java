@@ -68,7 +68,7 @@ public class EventService {
         List<Participant> participantList = buildParticipantsList(participants, event.getId());
         participantsRepository.saveAll(participantList);
 
-        return responseProvider.event().eventCreatedSuccessfully(event.getId());
+        return responseProvider.event().eventCreated(event.getId());
     }
 
     @Transactional

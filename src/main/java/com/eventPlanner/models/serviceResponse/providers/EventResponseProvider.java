@@ -9,7 +9,7 @@ import java.util.List;
 
 @Component
 public class EventResponseProvider {
-    public ServiceResponse eventCreatedSuccessfully(Long eventId) {
+    public ServiceResponse eventCreated(Long eventId) {
         return new ServiceResponse("Event created successfully, event id: " + eventId, HttpStatus.CREATED);
     }
 
