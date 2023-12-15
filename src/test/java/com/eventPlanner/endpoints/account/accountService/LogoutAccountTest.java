@@ -1,42 +1,13 @@
 package com.eventPlanner.endpoints.account.accountService;
 
-import com.eventPlanner.dataAccess.sessions.SessionManager;
-import com.eventPlanner.dataAccess.userEvents.ParticipantsRepository;
-import com.eventPlanner.dataAccess.userEvents.UserRepository;
-import com.eventPlanner.endpoints.ResponseProviderGenerator;
-import com.eventPlanner.endpoints.account.AccountService;
-import com.eventPlanner.models.schemas.User;
-import com.eventPlanner.models.serviceResponse.ServiceResponse;
-import com.eventPlanner.models.serviceResponse.providers.ResponseProvider;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
-public class LogoutAccountTest {
-    @Mock
-    private UserRepository userRepository;
-    @Mock
-    private ParticipantsRepository participantsRepository;
-    @Mock
-    private SessionManager sessionManager;
-    private ResponseProvider responseProvider;
-    @InjectMocks
-    private AccountService accountService;
-
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-        responseProvider = ResponseProviderGenerator.generate();
-        accountService = new AccountService(userRepository, participantsRepository, sessionManager, responseProvider);
-    }
-
+public class LogoutAccountTest extends BaseAccountServiceTest {
     @Test
     public void testLogoutAccount_InvalidSession_SessionNotDeletedAndReturnFailure() {
         // Arrange

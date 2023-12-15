@@ -1,40 +1,16 @@
 package com.eventPlanner.endpoints.account.accountService;
 
-import com.eventPlanner.dataAccess.sessions.SessionManager;
-import com.eventPlanner.dataAccess.userEvents.ParticipantsRepository;
-import com.eventPlanner.dataAccess.userEvents.UserRepository;
-import com.eventPlanner.endpoints.ResponseProviderGenerator;
-import com.eventPlanner.endpoints.account.AccountService;
 import com.eventPlanner.models.schemas.User;
 import com.eventPlanner.models.serviceResponse.ServiceResponse;
-import com.eventPlanner.models.serviceResponse.providers.ResponseProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class CreateAccountTest {
-    @Mock
-    private UserRepository userRepository;
-
-    @Mock
-    private ParticipantsRepository participantsRepository;
-
-    @Mock
-    private SessionManager sessionManager;
-
-    private ResponseProvider responseProvider;
-
-    @InjectMocks
-    private AccountService accountService;
-
+public class CreateAccountTest extends BaseAccountServiceTest {
     private final String takenUsernameStub = "takenUsername";
     private final String availableUsernameStub = "availableUsername";
     private final String takenEmailStub = "takenEmail";
@@ -43,10 +19,7 @@ public class CreateAccountTest {
 
     @BeforeEach
     public void setup() {
-        MockitoAnnotations.openMocks(this);
-        responseProvider = ResponseProviderGenerator.generate();
-        accountService = new AccountService(userRepository, participantsRepository, sessionManager, responseProvider);
-
+        super.setup();
         when(userRepository.existsUserByName(takenUsernameStub)).thenReturn(true);
         when(userRepository.existsUserByName(availableUsernameStub)).thenReturn(false);
         when(userRepository.existsUserByEmail(takenEmailStub)).thenReturn(true);

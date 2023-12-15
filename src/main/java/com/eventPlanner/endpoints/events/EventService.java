@@ -33,7 +33,8 @@ public class EventService {
     private final Map<EventSortMethod, Function<Long, List<Event>>> sortMethodFunctionMap = new HashMap<>();
 
     @Autowired
-    public EventService(EventRepository eventRepository, ParticipantsRepository participantsRepository, UserRepository userRepository, SessionManager sessionManager, ResponseProvider responseProvider) {
+    public EventService(EventRepository eventRepository, ParticipantsRepository participantsRepository,
+                        UserRepository userRepository, SessionManager sessionManager, ResponseProvider responseProvider) {
         this.eventRepository = eventRepository;
         this.participantsRepository = participantsRepository;
         this.userRepository = userRepository;
@@ -46,7 +47,8 @@ public class EventService {
     }
 
     @Transactional
-    public ServiceResponse createEvent(String name, String sessionId, String description, String location, LocalDateTime time, List<String> participants) {
+    public ServiceResponse createEvent(String name, String sessionId, String description,
+                                       String location, LocalDateTime time, List<String> participants) {
         if (sessionManager.missing(sessionId)) {
             return responseProvider.session().invalidSession();
         }
