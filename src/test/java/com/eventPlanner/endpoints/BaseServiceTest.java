@@ -13,5 +13,5 @@ abstract public class BaseServiceTest {
     protected ParticipantsRepository participantsRepository;
     @Mock
     protected SessionManager sessionManager;
-    protected ResponseProvider responseProvider;
+    protected ResponseProvider responseProvider = ResponseProviderGenerator.generate();
 }

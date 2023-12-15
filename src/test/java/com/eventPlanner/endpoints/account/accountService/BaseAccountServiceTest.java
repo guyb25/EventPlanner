@@ -1,7 +1,6 @@
 package com.eventPlanner.endpoints.account.accountService;
 
 import com.eventPlanner.endpoints.BaseServiceTest;
-import com.eventPlanner.endpoints.ResponseProviderGenerator;
 import com.eventPlanner.endpoints.account.AccountService;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
@@ -14,7 +13,6 @@ public abstract class BaseAccountServiceTest extends BaseServiceTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        responseProvider = ResponseProviderGenerator.generate();
         accountService = new AccountService(userRepository, participantsRepository, sessionManager, responseProvider);
     }
 }
