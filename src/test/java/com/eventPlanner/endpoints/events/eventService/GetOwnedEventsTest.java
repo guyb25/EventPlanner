@@ -2,10 +2,7 @@ package com.eventPlanner.endpoints.events.eventService;
 
 import com.eventPlanner.models.dtos.events.EventDataDto;
 import com.eventPlanner.models.dtos.events.RequestOwnedEventsDto;
-import com.eventPlanner.models.schemas.Event;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,26 +29,16 @@ public class GetOwnedEventsTest extends BaseEventServiceTest {
     public void testGetOwnedEvents_ValidSession_ReturnOwnedEvents() {
         // Arrange
         var userId = 50L;
+        var eventDummy = eventDummyBuilder.generate().build();
         var eventDataDto = new EventDataDto(
-                999L,
-                "event",
-                "host",
-                "Description",
-                "location",
-                LocalDateTime.now(),
-                LocalDateTime.now(),
+                eventDummy.getId(),
+                eventDummy.getName(),
+                "hostname",
+                eventDummy.getDescription(),
+                eventDummy.getLocation(),
+                eventDummy.getTime(),
+                eventDummy.getCreationTime(),
                 new ArrayList<>());
-
-        var matchingEvent = new Event(
-                eventDataDto.name(),
-                userId,
-                eventDataDto.description(),
-                eventDataDto.location(),
-                eventDataDto.time(),
-                eventDataDto.creationTime()
-        );
-
-        matchingEvent.setId(eventDataDto.id());
 
         var eventDataList = List.of(eventDataDto);
 
@@ -59,7 +46,7 @@ public class GetOwnedEventsTest extends BaseEventServiceTest {
 
         when(sessionManager.getUserIdFromSession(requestOwnedEventsDto.sessionId())).thenReturn(userId);
         when(userDataService.tryGetUsernameById(userId)).thenReturn(eventDataDto.host());
-        when(eventDataService.findEventsByHostId(userId)).thenReturn(List.of(matchingEvent));
+        when(eventDataService.findEventsByHostId(userId)).thenReturn(List.of(eventDummy));
 
         // Act
         var actualResponse = eventService.getOwnedEvents(requestOwnedEventsDto);

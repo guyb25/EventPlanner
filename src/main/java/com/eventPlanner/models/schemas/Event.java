@@ -26,6 +26,17 @@ public class Event {
         this.creationTime = creationTime;
     }
 
+    public Event(Long id, String name, Long hostId, String description, String location,
+                 LocalDateTime time, LocalDateTime creationTime) {
+        this.id = id;
+        this.name = name;
+        this.hostId = hostId;
+        this.description = description;
+        this.location = location;
+        this.time = time;
+        this.creationTime = creationTime;
+    }
+
     public Event() {
 
     }

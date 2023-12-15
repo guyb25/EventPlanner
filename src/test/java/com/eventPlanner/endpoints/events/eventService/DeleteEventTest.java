@@ -48,8 +48,7 @@ public class DeleteEventTest extends BaseEventServiceTest {
         var userId = 2L;
 
         var expectedResponse = responseProvider.general().unauthorized();
-        var eventDummy = new Event("name", eventHostId, "desc",
-                "location", LocalDateTime.now(), LocalDateTime.now());
+        var eventDummy = eventDummyBuilder.generate().withHostId(eventHostId).build();
 
         when(sessionManager.missing(deleteEventDto.sessionId())).thenReturn(false);
         when(sessionManager.getUserIdFromSession(deleteEventDto.sessionId())).thenReturn(userId);
@@ -68,9 +67,7 @@ public class DeleteEventTest extends BaseEventServiceTest {
     public void testDeleteEvent_ValidRequest_EventDeletedAndReturnSuccess() {
         // Arrange
         var expectedResponse = responseProvider.event().eventDeleted();
-
-        var eventDummy = new Event("name", 1L, "desc",
-                "location", LocalDateTime.now(), LocalDateTime.now());
+        var eventDummy = eventDummyBuilder.generate().build();
 
         when(sessionManager.missing(deleteEventDto.sessionId())).thenReturn(false);
         when(sessionManager.getUserIdFromSession(deleteEventDto.sessionId())).thenReturn(eventDummy.getHostId());

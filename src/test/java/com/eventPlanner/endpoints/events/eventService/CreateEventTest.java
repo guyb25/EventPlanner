@@ -21,14 +21,7 @@ public class CreateEventTest extends BaseEventServiceTest {
     public void setup() {
         super.setup();
         participantNamesDummy = List.of("user1", "user2", "user3");
-        eventDummy = new Event(
-                "eventDummy",
-                543L,
-                "description",
-                "location",
-                LocalDateTime.now(),
-                LocalDateTime.now()
-        );
+        eventDummy = eventDummyBuilder.generate().build();
     }
 
     @Test
