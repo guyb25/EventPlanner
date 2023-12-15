@@ -1,6 +1,6 @@
 package com.eventPlanner.endpoints.events.eventService;
 
-import com.eventPlanner.dummyBuilders.RandomValueGenerator;
+import com.eventPlanner.dummyBuilders.UniqueValueGenerator;
 import com.eventPlanner.models.dtos.events.RequestSpecificEventDto;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +13,7 @@ public class GetSpecificEventTest extends BaseEventServiceTest {
     @Test
     public void testGetSpecificEvent_InvalidSession_ReturnFailure() {
         // Arrange
-        var dto = new RequestSpecificEventDto(RandomValueGenerator.randomUniqueString(), RandomValueGenerator.randomUniqueLong());
+        var dto = new RequestSpecificEventDto(UniqueValueGenerator.uniqueString(), UniqueValueGenerator.uniqueLong());
         var expectedResponse = responseProvider.session().invalidSession();
         when(sessionManager.missing(dto.sessionId())).thenReturn(true);
 
@@ -27,7 +27,7 @@ public class GetSpecificEventTest extends BaseEventServiceTest {
     @Test
     public void testGetSpecificEvent_EventDoesntExist_ReturnFailure() {
         // Arrange
-        var dto = new RequestSpecificEventDto(RandomValueGenerator.randomUniqueString(), RandomValueGenerator.randomUniqueLong());
+        var dto = new RequestSpecificEventDto(UniqueValueGenerator.uniqueString(), UniqueValueGenerator.uniqueLong());
         var expectedResponse = responseProvider.event().eventNotFound(dto.eventId());
 
         when(sessionManager.missing(dto.sessionId())).thenReturn(false);
@@ -43,11 +43,11 @@ public class GetSpecificEventTest extends BaseEventServiceTest {
     @Test
     public void testGetSpecificEvent_Unauthorized_ReturnUnauthorized() {
         // Arrange
-        var dto = new RequestSpecificEventDto(RandomValueGenerator.randomUniqueString(), RandomValueGenerator.randomUniqueLong());
+        var dto = new RequestSpecificEventDto(UniqueValueGenerator.uniqueString(), UniqueValueGenerator.uniqueLong());
         var expectedResponse = responseProvider.general().unauthorized();
 
-        var userId = RandomValueGenerator.randomUniqueLong();
-        var differentUserId = RandomValueGenerator.randomUniqueLong();
+        var userId = UniqueValueGenerator.uniqueLong();
+        var differentUserId = UniqueValueGenerator.uniqueLong();
         var eventDummy = eventDummyBuilder.generate().withHostId(differentUserId).build();
 
         when(sessionManager.missing(dto.sessionId())).thenReturn(false);
@@ -64,9 +64,9 @@ public class GetSpecificEventTest extends BaseEventServiceTest {
     @Test
     public void testGetSpecificEvent_AuthorizedEventOwner_ReturnEvents() {
         // Arrange
-        var dto = new RequestSpecificEventDto(RandomValueGenerator.randomUniqueString(), RandomValueGenerator.randomUniqueLong());
+        var dto = new RequestSpecificEventDto(UniqueValueGenerator.uniqueString(), UniqueValueGenerator.uniqueLong());
 
-        var userId = RandomValueGenerator.randomUniqueLong();
+        var userId = UniqueValueGenerator.uniqueLong();
         var eventDummy = eventDummyBuilder.generate().withEventId(dto.eventId()).withHostId(userId).build();
         var eventDtoDummy = eventDtoDummyBuilder.fromEvent(eventDummy).build();
         var expectedResponse = responseProvider.event().eventData(eventDtoDummy);
@@ -74,8 +74,7 @@ public class GetSpecificEventTest extends BaseEventServiceTest {
         when(sessionManager.missing(dto.sessionId())).thenReturn(false);
         when(sessionManager.getUserIdFromSession(dto.sessionId())).thenReturn(userId);
         when(eventDataService.tryFindEventById(dto.eventId())).thenReturn(eventDummy);
-        when(participantDataService.findEventParticipantsNames(dto.eventId())).thenReturn(eventDtoDummy.participants());
-        when(userDataService.tryGetUsernameById(eventDummy.getHostId())).thenReturn(eventDtoDummy.host());
+        mockEventParticipantsAndHostUsernames(eventDummy, eventDtoDummy);
 
         // Act
         var actualResponse = eventService.getSpecificEvent(dto);
@@ -87,11 +86,11 @@ public class GetSpecificEventTest extends BaseEventServiceTest {
     @Test
     public void testGetSpecificEvent_AuthorizedEventParticipant_ReturnEvents() {
         // Arrange
-        var dto = new RequestSpecificEventDto(RandomValueGenerator.randomUniqueString(), RandomValueGenerator.randomUniqueLong());
+        var dto = new RequestSpecificEventDto(UniqueValueGenerator.uniqueString(), UniqueValueGenerator.uniqueLong());
 
-        var userId = RandomValueGenerator.randomUniqueLong();
-        var username = RandomValueGenerator.randomUniqueString();
-        var differentUserId = RandomValueGenerator.randomUniqueLong();
+        var userId = UniqueValueGenerator.uniqueLong();
+        var username = UniqueValueGenerator.uniqueString();
+        var differentUserId = UniqueValueGenerator.uniqueLong();
         var eventDummy = eventDummyBuilder.generate().withEventId(dto.eventId()).withHostId(differentUserId).build();
         var eventDtoDummy = eventDtoDummyBuilder.fromEvent(eventDummy).withParticipants(List.of(username)).build();
         var expectedResponse = responseProvider.event().eventData(eventDtoDummy);

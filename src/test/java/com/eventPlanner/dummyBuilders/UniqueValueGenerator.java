@@ -4,14 +4,14 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class RandomValueGenerator {
+public class UniqueValueGenerator {
     private static final AtomicLong uniqueId = new AtomicLong(ThreadLocalRandom.current().nextLong());
 
-    public static String randomUniqueString() {
+    public static String uniqueString() {
         return UUID.randomUUID().toString();
     }
 
-    public static Long randomUniqueLong() {
+    public static Long uniqueLong() {
         return uniqueId.getAndIncrement();
     }
 }

@@ -1,9 +1,9 @@
 package com.eventPlanner.dummyBuilders;
 
-import com.eventPlanner.models.dtos.events.CreateEventDto;
 import com.eventPlanner.models.dtos.events.EventDataDto;
 import com.eventPlanner.models.schemas.Event;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class EventDtoDummyBuilder {
@@ -13,12 +13,12 @@ public class EventDtoDummyBuilder {
         eventDataDto = new EventDataDto(
                 event.getId(),
                 event.getName(),
-                RandomValueGenerator.randomUniqueString(),
+                UniqueValueGenerator.uniqueString(),
                 event.getDescription(),
                 event.getLocation(),
                 event.getTime(),
                 event.getCreationTime(),
-                List.of(RandomValueGenerator.randomUniqueString(), RandomValueGenerator.randomUniqueString())
+                List.of(UniqueValueGenerator.uniqueString(), UniqueValueGenerator.uniqueString())
         );
 
         return this;

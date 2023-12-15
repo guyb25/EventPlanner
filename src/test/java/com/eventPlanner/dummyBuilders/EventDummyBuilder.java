@@ -10,11 +10,11 @@ public class EventDummyBuilder {
 
     public EventDummyBuilder generate() {
         event = new Event(
-                RandomValueGenerator.randomUniqueLong(),
-                RandomValueGenerator.randomUniqueString(),
-                RandomValueGenerator.randomUniqueLong(),
-                RandomValueGenerator.randomUniqueString(),
-                RandomValueGenerator.randomUniqueString(),
+                UniqueValueGenerator.uniqueLong(),
+                UniqueValueGenerator.uniqueString(),
+                UniqueValueGenerator.uniqueLong(),
+                UniqueValueGenerator.uniqueString(),
+                UniqueValueGenerator.uniqueString(),
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -29,6 +29,11 @@ public class EventDummyBuilder {
 
     public EventDummyBuilder withHostId(Long hostId) {
         event.setHostId(hostId);
+        return this;
+    }
+
+    public EventDummyBuilder withLocation(String location) {
+        event.setLocation(location);
         return this;
     }
 
