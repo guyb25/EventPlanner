@@ -119,7 +119,6 @@ public class EventService {
         }
 
         Long userId = sessionManager.getUserIdFromSession(sessionId);
-        Long hostId = eventDataService.tryFindEventHostId(eventId);
         Event event = eventDataService.tryFindEventById(eventId);
         List<Long> participantIds = participantDataService.findEventParticipantsIds(eventId);
 
@@ -127,7 +126,7 @@ public class EventService {
             return responseProvider.event().eventNotFound(eventId);
         }
 
-        if (!hostId.equals(userId) && !participantIds.contains(userId)) {
+        if (!event.getHostId().equals(userId) && !participantIds.contains(userId)) {
             return responseProvider.general().unauthorized();
         }
 

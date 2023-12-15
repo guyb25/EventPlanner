@@ -22,6 +22,11 @@ public class EventDummyBuilder {
         return this;
     }
 
+    public EventDummyBuilder withEventId(Long eventId) {
+        event.setId(eventId);
+        return this;
+    }
+
     public EventDummyBuilder withHostId(Long hostId) {
         event.setHostId(hostId);
         return this;
