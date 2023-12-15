@@ -9,13 +9,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 public class GetOwnedEventsTest extends BaseEventServiceTest {
-    private final RequestOwnedEventsDto requestOwnedEventsDto = new RequestOwnedEventsDto("sessionId");
-
     @Test
     public void testGetOwnedEvents_InvalidSession_ReturnFailure() {
         // Arrange
+        var requestOwnedEventsDto = new RequestOwnedEventsDto(UniqueValueGenerator.uniqueString());
         var expectedResponse = responseProvider.session().invalidSession();
-        when(sessionManager.missing(requestOwnedEventsDto.sessionId())).thenReturn(true);
+        mockInvalidSession(requestOwnedEventsDto.sessionId());
 
         // Act
         var actualResponse = eventService.getOwnedEvents(requestOwnedEventsDto);
@@ -27,6 +26,7 @@ public class GetOwnedEventsTest extends BaseEventServiceTest {
     @Test
     public void testGetOwnedEvents_ValidSession_ReturnOwnedEvents() {
         // Arrange
+        var requestOwnedEventsDto = new RequestOwnedEventsDto(UniqueValueGenerator.uniqueString());
         var userId = UniqueValueGenerator.uniqueLong();
         var eventDummy = eventDummyBuilder.generate().withHostId(userId).build();
         var eventDataDto = eventDtoDummyBuilder.fromEvent(eventDummy).withHost(UniqueValueGenerator.uniqueString()).build();
@@ -34,6 +34,7 @@ public class GetOwnedEventsTest extends BaseEventServiceTest {
 
         var expectedResponse = responseProvider.event().eventDataList(eventDataList);
 
+        mockValidSession(requestOwnedEventsDto.sessionId());
         when(sessionManager.getUserIdFromSession(requestOwnedEventsDto.sessionId())).thenReturn(userId);
         when(eventDataService.findEventsByHostId(userId)).thenReturn(List.of(eventDummy));
         mockEventParticipantsAndHostUsernames(eventDummy, eventDataDto);

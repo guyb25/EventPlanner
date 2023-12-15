@@ -15,7 +15,7 @@ public class GetLocationEventsTest extends BaseEventServiceTest {
         // Arrange
         var dto = new RequestLocationEventsDto(UniqueValueGenerator.uniqueString(), UniqueValueGenerator.uniqueString());
         var expectedResponse = responseProvider.session().invalidSession();
-        when(sessionManager.missing(dto.sessionId())).thenReturn(true);
+        mockInvalidSession(dto.sessionId());
 
         // Act
         var actualResponse = eventService.getLocationEvents(dto);
@@ -42,6 +42,7 @@ public class GetLocationEventsTest extends BaseEventServiceTest {
 
         var expectedResponse = responseProvider.event().eventDataList(eventDtoList);
 
+        mockValidSession(dto.sessionId());
         when(sessionManager.getUserIdFromSession(dto.sessionId())).thenReturn(userId);
         when(eventDataService.findAllEventsByUserIdAndLocation(userId, dto.location())).thenReturn(eventList);
         mockEventParticipantsAndHostUsernames(eventList, eventDtoList);

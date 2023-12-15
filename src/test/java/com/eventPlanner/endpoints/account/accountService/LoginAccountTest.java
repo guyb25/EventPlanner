@@ -1,5 +1,6 @@
 package com.eventPlanner.endpoints.account.accountService;
 
+import com.eventPlanner.dummyBuilders.UniqueValueGenerator;
 import com.eventPlanner.models.dtos.account.LoginAccountDto;
 import com.eventPlanner.models.schemas.User;
 import com.eventPlanner.models.serviceResponse.ServiceResponse;
@@ -33,7 +34,7 @@ public class LoginAccountTest extends BaseAccountServiceTest {
     @Test
     public void testLoginAccount_ValidCredentials_SessionCreatedAndReturnSuccess() {
         // Arrange
-        String sessionIdStub = "sessionIdStub";
+        String sessionIdStub = UniqueValueGenerator.uniqueString();
         User userStub = new User("validUsername", "validPassword", "validEmail", 123L);
 
         when(userDataService.doUsernameAndPasswordMatch(userStub.getName(), userStub.getPassword())).thenReturn(true);

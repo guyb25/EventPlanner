@@ -15,7 +15,7 @@ public class GetSpecificEventTest extends BaseEventServiceTest {
         // Arrange
         var dto = new RequestSpecificEventDto(UniqueValueGenerator.uniqueString(), UniqueValueGenerator.uniqueLong());
         var expectedResponse = responseProvider.session().invalidSession();
-        when(sessionManager.missing(dto.sessionId())).thenReturn(true);
+        mockInvalidSession(dto.sessionId());
 
         // Act
         var actualResponse = eventService.getSpecificEvent(dto);
@@ -30,7 +30,7 @@ public class GetSpecificEventTest extends BaseEventServiceTest {
         var dto = new RequestSpecificEventDto(UniqueValueGenerator.uniqueString(), UniqueValueGenerator.uniqueLong());
         var expectedResponse = responseProvider.event().eventNotFound(dto.eventId());
 
-        when(sessionManager.missing(dto.sessionId())).thenReturn(false);
+        mockValidSession(dto.sessionId());
         when(eventDataService.tryFindEventById(dto.eventId())).thenReturn(null);
 
         // Act
@@ -50,7 +50,7 @@ public class GetSpecificEventTest extends BaseEventServiceTest {
         var differentUserId = UniqueValueGenerator.uniqueLong();
         var eventDummy = eventDummyBuilder.generate().withHostId(differentUserId).build();
 
-        when(sessionManager.missing(dto.sessionId())).thenReturn(false);
+        mockValidSession(dto.sessionId());
         when(sessionManager.getUserIdFromSession(dto.sessionId())).thenReturn(userId);
         when(eventDataService.tryFindEventById(dto.eventId())).thenReturn(eventDummy);
 
@@ -71,7 +71,7 @@ public class GetSpecificEventTest extends BaseEventServiceTest {
         var eventDtoDummy = eventDtoDummyBuilder.fromEvent(eventDummy).build();
         var expectedResponse = responseProvider.event().eventData(eventDtoDummy);
 
-        when(sessionManager.missing(dto.sessionId())).thenReturn(false);
+        mockValidSession(dto.sessionId());
         when(sessionManager.getUserIdFromSession(dto.sessionId())).thenReturn(userId);
         when(eventDataService.tryFindEventById(dto.eventId())).thenReturn(eventDummy);
         mockEventParticipantsAndHostUsernames(eventDummy, eventDtoDummy);
@@ -95,13 +95,12 @@ public class GetSpecificEventTest extends BaseEventServiceTest {
         var eventDtoDummy = eventDtoDummyBuilder.fromEvent(eventDummy).withParticipants(List.of(username)).build();
         var expectedResponse = responseProvider.event().eventData(eventDtoDummy);
 
-        when(sessionManager.missing(dto.sessionId())).thenReturn(false);
+        mockValidSession(dto.sessionId());
         when(sessionManager.getUserIdFromSession(dto.sessionId())).thenReturn(userId);
         when(userDataService.tryGetUsernameById(userId)).thenReturn(username);
         when(eventDataService.tryFindEventById(dto.eventId())).thenReturn(eventDummy);
         when(participantDataService.findEventParticipantsIds(dto.eventId())).thenReturn(List.of(userId));
-        when(participantDataService.findEventParticipantsNames(dto.eventId())).thenReturn(eventDtoDummy.participants());
-        when(userDataService.tryGetUsernameById(eventDummy.getHostId())).thenReturn(eventDtoDummy.host());
+        mockEventParticipantsAndHostUsernames(eventDummy, eventDtoDummy);
 
         // Act
         var actualResponse = eventService.getSpecificEvent(dto);

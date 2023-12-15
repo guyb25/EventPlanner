@@ -1,5 +1,6 @@
 package com.eventPlanner.endpoints.events.eventService;
 
+import com.eventPlanner.dummyBuilders.UniqueValueGenerator;
 import com.eventPlanner.models.dtos.events.DeleteEventDto;
 import com.eventPlanner.models.schemas.Event;
 import org.junit.jupiter.api.Test;
@@ -10,13 +11,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class DeleteEventTest extends BaseEventServiceTest {
-    private final DeleteEventDto deleteEventDto = new DeleteEventDto(999L, "sessionId");
-
     @Test
     public void testDeleteEvent_InvalidSession_EventNotDeletedAndReturnFailure() {
         // Arrange
+        var deleteEventDto = new DeleteEventDto(UniqueValueGenerator.uniqueLong(), UniqueValueGenerator.uniqueString());
         var expectedResponse = responseProvider.session().invalidSession();
-        when(sessionManager.missing(deleteEventDto.sessionId())).thenReturn(true);
+        mockInvalidSession(deleteEventDto.sessionId());
 
         // Act
         var actualResponse = eventService.deleteEvent(deleteEventDto);
@@ -28,8 +28,10 @@ public class DeleteEventTest extends BaseEventServiceTest {
     @Test
     public void testDeleteEvent_EventNotFound_EventNotDeletedAndReturnFailure() {
         // Arrange
+        var deleteEventDto = new DeleteEventDto(UniqueValueGenerator.uniqueLong(), UniqueValueGenerator.uniqueString());
         var expectedResponse = responseProvider.event().eventNotFound(deleteEventDto.eventId());
-        when(sessionManager.missing(deleteEventDto.sessionId())).thenReturn(false);
+
+        mockValidSession(deleteEventDto.sessionId());
         when(eventDataService.tryFindEventById(deleteEventDto.eventId())).thenReturn(null);
 
         // Act
@@ -44,13 +46,14 @@ public class DeleteEventTest extends BaseEventServiceTest {
     @Test
     public void testDeleteEvent_NotAuthorized_EventNotDeletedAndReturnFailure() {
         // Arrange
-        var eventHostId = 1L;
-        var userId = 2L;
+        var eventHostId = UniqueValueGenerator.uniqueLong();
+        var userId = UniqueValueGenerator.uniqueLong();
 
+        var deleteEventDto = new DeleteEventDto(UniqueValueGenerator.uniqueLong(), UniqueValueGenerator.uniqueString());
         var expectedResponse = responseProvider.general().unauthorized();
         var eventDummy = eventDummyBuilder.generate().withHostId(eventHostId).build();
 
-        when(sessionManager.missing(deleteEventDto.sessionId())).thenReturn(false);
+        mockValidSession(deleteEventDto.sessionId());
         when(sessionManager.getUserIdFromSession(deleteEventDto.sessionId())).thenReturn(userId);
         when(eventDataService.tryFindEventById(deleteEventDto.eventId())).thenReturn(eventDummy);
 
@@ -66,10 +69,11 @@ public class DeleteEventTest extends BaseEventServiceTest {
     @Test
     public void testDeleteEvent_ValidRequest_EventDeletedAndReturnSuccess() {
         // Arrange
+        var deleteEventDto = new DeleteEventDto(UniqueValueGenerator.uniqueLong(), UniqueValueGenerator.uniqueString());
         var expectedResponse = responseProvider.event().eventDeleted();
         var eventDummy = eventDummyBuilder.generate().build();
 
-        when(sessionManager.missing(deleteEventDto.sessionId())).thenReturn(false);
+        mockValidSession(deleteEventDto.sessionId());
         when(sessionManager.getUserIdFromSession(deleteEventDto.sessionId())).thenReturn(eventDummy.getHostId());
         when(eventDataService.tryFindEventById(deleteEventDto.eventId())).thenReturn(eventDummy);
 

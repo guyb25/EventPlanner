@@ -1,5 +1,6 @@
 package com.eventPlanner.endpoints.events.eventService;
 
+import com.eventPlanner.dummyBuilders.UniqueValueGenerator;
 import com.eventPlanner.models.dtos.events.CreateEventDto;
 import com.eventPlanner.models.schemas.Event;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,16 +29,19 @@ public class CreateEventTest extends BaseEventServiceTest {
     public void testCreateEvent_InvalidSession_EventNotCreatedAndReturnFailure() {
         // Arrange
         var expectedResponse = responseProvider.session().invalidSession();
-
-        // Act
-        var actualResponse = eventService.createEvent(new CreateEventDto(
+        var createEventDto = new CreateEventDto(
                 eventDummy.getName(),
-                invalidSessionId,
+                UniqueValueGenerator.uniqueString(),
                 eventDummy.getDescription(),
                 eventDummy.getLocation(),
                 eventDummy.getTime(),
                 participantNamesDummy
-        ));
+        );
+
+        mockInvalidSession(createEventDto.sessionId());
+
+        // Act
+        var actualResponse = eventService.createEvent(createEventDto);
 
         // Assert
         assertThat(actualResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
@@ -49,21 +53,23 @@ public class CreateEventTest extends BaseEventServiceTest {
     public void testCreateEvent_AllUsersExist_EventCreatedAndReturnSuccess() {
         // Arrange
         var expectedResponse = responseProvider.event().eventCreated(eventDummy.getId());
-        ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
-
-        when(sessionManager.getUserIdFromSession(validSessionId)).thenReturn(eventDummy.getHostId());
-        when(userDataService.doAllParticipantsExistByNames(participantNamesDummy)).thenReturn(true);
-        when(eventDataService.scheduleEvent(any())).thenReturn(eventDummy);
-
-        // Act
-        var actualResponse = eventService.createEvent(new CreateEventDto(
+        var createEventDto = new CreateEventDto(
                 eventDummy.getName(),
-                validSessionId,
+                UniqueValueGenerator.uniqueString(),
                 eventDummy.getDescription(),
                 eventDummy.getLocation(),
                 eventDummy.getTime(),
                 participantNamesDummy
-        ));
+        );
+        ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
+
+        mockValidSession(createEventDto.sessionId());
+        when(sessionManager.getUserIdFromSession(createEventDto.sessionId())).thenReturn(eventDummy.getHostId());
+        when(userDataService.doAllParticipantsExistByNames(participantNamesDummy)).thenReturn(true);
+        when(eventDataService.scheduleEvent(any())).thenReturn(eventDummy);
+
+        // Act
+        var actualResponse = eventService.createEvent(createEventDto);
 
         // Assert
         assertThat(actualResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
@@ -81,18 +87,21 @@ public class CreateEventTest extends BaseEventServiceTest {
     public void testCreateEvent_ParticipantsDontExist_EventNotCreatedAndExceptionThrown() {
         // Arrange
         var expectedResponse = responseProvider.event().participantsNotExist();
-        when(sessionManager.getUserIdFromSession(validSessionId)).thenReturn(eventDummy.getHostId());
-        when(userDataService.doAllParticipantsExistByNames(participantNamesDummy)).thenReturn(false);
-
-        // Act
-        var actualResponse = eventService.createEvent(new CreateEventDto(
+        var createEventDto = new CreateEventDto(
                 eventDummy.getName(),
-                validSessionId,
+                UniqueValueGenerator.uniqueString(),
                 eventDummy.getDescription(),
                 eventDummy.getLocation(),
                 eventDummy.getTime(),
                 participantNamesDummy
-        ));
+        );
+
+        mockValidSession(createEventDto.sessionId());
+        when(sessionManager.getUserIdFromSession(createEventDto.sessionId())).thenReturn(eventDummy.getHostId());
+        when(userDataService.doAllParticipantsExistByNames(participantNamesDummy)).thenReturn(false);
+
+        // Act
+        var actualResponse = eventService.createEvent(createEventDto);
 
         // Assert
         assertThat(actualResponse).usingRecursiveComparison().isEqualTo(expectedResponse);

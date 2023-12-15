@@ -14,10 +14,9 @@ public class GetAuthorizedEventsTest extends BaseEventServiceTest {
     @Test
     public void testGetAuthorizedEvents_InvalidSession_ReturnInvalidSession() {
         // Arrange
-        var dto = new RequestAuthorizedEventsDto("sessionId", null);
+        var dto = new RequestAuthorizedEventsDto(UniqueValueGenerator.uniqueString(), null);
         var expectedResponse = responseProvider.session().invalidSession();
-
-        when(sessionManager.missing(dto.sessionId())).thenReturn(true);
+        mockInvalidSession(dto.sessionId());
 
         // Act
         var actualResponse = eventService.getAuthorizedEvents(dto);
@@ -29,7 +28,7 @@ public class GetAuthorizedEventsTest extends BaseEventServiceTest {
     @Test
     public void testGetAuthorizedEvents_Valid_ReturnUnsortedEvents() {
         // Arrange
-        var dto = new RequestAuthorizedEventsDto("sessionId", EventSortMethod.DATE);
+        var dto = new RequestAuthorizedEventsDto(UniqueValueGenerator.uniqueString(), EventSortMethod.DATE);
         var userId = UniqueValueGenerator.uniqueLong();
         var username = UniqueValueGenerator.uniqueString();
 
@@ -45,6 +44,7 @@ public class GetAuthorizedEventsTest extends BaseEventServiceTest {
 
         var expectedResponse = responseProvider.event().eventDataList(eventDtoList);
 
+        mockValidSession(dto.sessionId());
         mockEventParticipantsAndHostUsernames(eventList, eventDtoList);
         when(sessionManager.getUserIdFromSession(dto.sessionId())).thenReturn(userId);
         when(eventDataService.findUserEventsSorted(userId, EventSortMethod.DATE)).thenReturn(eventList);
