@@ -13,6 +13,6 @@ public abstract class BaseAccountServiceTest extends BaseServiceTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        accountService = new AccountService(userRepository, participantsRepository, sessionManager, responseProvider);
+        accountService = new AccountService(sessionManager, responseProvider, userDataService, participantDataService);
     }
 }

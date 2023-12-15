@@ -20,8 +20,8 @@ public class DeleteAccountTest extends BaseAccountServiceTest {
 
         // Assert
         assertThat(actualResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
-        verify(participantsRepository, never()).deleteAllByUserId(any());
-        verify(userRepository, never()).deleteById(any());
+        verify(participantDataService, never()).deleteAllByUserId(any());
+        verify(userDataService, never()).deleteUserById(any());
         verify(sessionManager, never()).endSession(any());
     }
 
@@ -40,8 +40,8 @@ public class DeleteAccountTest extends BaseAccountServiceTest {
 
         // Assert
         assertThat(actualResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
-        verify(participantsRepository, times(1)).deleteAllByUserId(userIdStub);
-        verify(userRepository, times(1)).deleteById(userIdStub);
+        verify(participantDataService, times(1)).deleteAllByUserId(userIdStub);
+        verify(userDataService, times(1)).deleteUserById(userIdStub);
         verify(sessionManager, times(1)).endSession(sessionIdStub);
     }
 }

@@ -20,10 +20,10 @@ public class CreateAccountTest extends BaseAccountServiceTest {
     @BeforeEach
     public void setup() {
         super.setup();
-        when(userRepository.existsUserByName(takenUsernameStub)).thenReturn(true);
-        when(userRepository.existsUserByName(availableUsernameStub)).thenReturn(false);
-        when(userRepository.existsUserByEmail(takenEmailStub)).thenReturn(true);
-        when(userRepository.existsUserByEmail(availableEmailStub)).thenReturn(false);
+        when(userDataService.isUsernameTaken(takenUsernameStub)).thenReturn(true);
+        when(userDataService.isUsernameTaken(availableUsernameStub)).thenReturn(false);
+        when(userDataService.isEmailTaken(takenEmailStub)).thenReturn(true);
+        when(userDataService.isEmailTaken(availableEmailStub)).thenReturn(false);
     }
 
     @Test
@@ -36,7 +36,7 @@ public class CreateAccountTest extends BaseAccountServiceTest {
 
         // Assert
         assertThat(actualResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
-        verify(userRepository, never()).save(any(User.class));
+        verify(userDataService, never()).saveUser(any(User.class));
     }
 
     @Test
@@ -49,7 +49,7 @@ public class CreateAccountTest extends BaseAccountServiceTest {
 
         // Assert
         assertThat(actualResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
-        verify(userRepository, never()).save(any(User.class));
+        verify(userDataService, never()).saveUser(any());
     }
 
     @Test
@@ -63,7 +63,7 @@ public class CreateAccountTest extends BaseAccountServiceTest {
         ServiceResponse actualResponse = accountService.createAccount(availableUsernameStub, validPassword, availableEmailStub);
 
         // Assert
-        verify(userRepository, times(1)).save(userCaptor.capture());
+        verify(userDataService, times(1)).saveUser(userCaptor.capture());
         assertThat(userCaptor.getValue()).usingRecursiveComparison().isEqualTo(expectedUserToBeSaved);
         assertThat(actualResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
     }

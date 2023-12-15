@@ -1,12 +1,11 @@
 package com.eventPlanner.endpoints.events;
 
 import com.eventPlanner.dataAccess.sessions.SessionManager;
-import com.eventPlanner.dataAccess.userEvents.EventRepository;
-import com.eventPlanner.dataAccess.userEvents.ParticipantsRepository;
-import com.eventPlanner.dataAccess.userEvents.UserRepository;
+import com.eventPlanner.dataAccess.userEvents.services.EventDataService;
+import com.eventPlanner.dataAccess.userEvents.services.ParticipantDataService;
+import com.eventPlanner.dataAccess.userEvents.services.UserDataService;
 import com.eventPlanner.models.dtos.events.EventDataDto;
 import com.eventPlanner.models.schemas.Event;
-import com.eventPlanner.models.schemas.Participant;
 import com.eventPlanner.models.serviceResponse.ServiceResponse;
 import com.eventPlanner.models.serviceResponse.providers.ResponseProvider;
 import com.eventPlanner.models.types.EventSortMethod;
@@ -15,35 +14,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 @Service
 public class EventService {
-    private final EventRepository eventRepository;
-    private final ParticipantsRepository participantsRepository;
-    private final UserRepository userRepository;
     private final SessionManager sessionManager;
     private final ResponseProvider responseProvider;
-
-    private final Map<EventSortMethod, Function<Long, List<Event>>> sortMethodFunctionMap = new HashMap<>();
+    private final UserDataService userDataService;
+    private final ParticipantDataService participantDataService;
+    private final EventDataService eventDataService;
 
     @Autowired
-    public EventService(EventRepository eventRepository, ParticipantsRepository participantsRepository,
-                        UserRepository userRepository, SessionManager sessionManager, ResponseProvider responseProvider) {
-        this.eventRepository = eventRepository;
-        this.participantsRepository = participantsRepository;
-        this.userRepository = userRepository;
+    public EventService(SessionManager sessionManager, ResponseProvider responseProvider, UserDataService userDataService,
+                        ParticipantDataService participantDataService, EventDataService eventDataService) {
         this.sessionManager = sessionManager;
         this.responseProvider = responseProvider;
-
-        sortMethodFunctionMap.put(EventSortMethod.DATE, eventRepository::findAllEventsByParticipantIdOrderByTime);
-        sortMethodFunctionMap.put(EventSortMethod.CREATION_TIME, eventRepository::findAllEventsByParticipantIdOrderByCreationTime);
-        sortMethodFunctionMap.put(EventSortMethod.POPULARITY, eventRepository::findAllEventsByParticipantIdOrderByPopularity);
+        this.userDataService = userDataService;
+        this.participantDataService = participantDataService;
+        this.eventDataService = eventDataService;
     }
 
     @Transactional
@@ -54,42 +43,36 @@ public class EventService {
         }
 
         Long hostId = sessionManager.getUserIdFromSession(sessionId);
-        Event event = new Event(name, hostId, description, location, time, LocalDateTime.now());
 
-        for (String participant : participants) {
-            if (!userRepository.existsUserByName(participant)) {
-                throw new IllegalArgumentException("user not found: " + participant);
-            }
+        if (!userDataService.doAllParticipantsExistByNames(participants)) {
+            throw new IllegalArgumentException("invalid participants list");
         }
 
-        // Make sure to grab the newly created event entity, that has the auto generated ID
-        event = eventRepository.save(event);
-
-        List<Participant> participantList = buildParticipantsList(participants, event.getId());
-        participantsRepository.saveAll(participantList);
+        var event = eventDataService.scheduleEvent(new Event(name, hostId, description, location, time, LocalDateTime.now()));
+        participantDataService.inviteParticipantsToEvent(event.getId(), participants);
 
         return responseProvider.event().eventCreated(event.getId());
     }
 
     @Transactional
-    public ServiceResponse deleteEvent(Long id, String sessionId) {
+    public ServiceResponse deleteEvent(Long eventId, String sessionId) {
         if (sessionManager.missing(sessionId)) {
             return responseProvider.session().invalidSession();
         }
 
         Long userId = sessionManager.getUserIdFromSession(sessionId);
-        Event event = eventRepository.findEventById(id);
+        Event event = eventDataService.tryFindEventById(eventId);
 
         if (event == null) {
-            return responseProvider.event().eventNotFound(id);
+            return responseProvider.event().eventNotFound(eventId);
         }
 
         if (!event.getHostId().equals(userId)) {
             return responseProvider.general().unauthorized();
         }
 
-        eventRepository.deleteById(id);
-        participantsRepository.deleteAllByEventId(id);
+        eventDataService.deleteEventById(eventId);
+        participantDataService.deleteAllEventParticipants(eventId);
         return responseProvider.event().eventDeleted();
     }
 
@@ -99,9 +82,12 @@ public class EventService {
         }
 
         Long userId = sessionManager.getUserIdFromSession(sessionId);
-        String host = userRepository.getReferenceById(userId).getName();
-        List<Event> ownedEvents = eventRepository.findEventsByHostId(userId);
-        List<EventDataDto> eventDataDtoList = ownedEvents.stream().map(event -> buildEventDataDto(event, host)).toList();
+        String host = userDataService.tryGetUsernameById(userId);
+        List<Event> ownedEvents = eventDataService.findEventsByHostId(userId);
+        List<EventDataDto> eventDataDtoList = ownedEvents
+                .stream()
+                .map(event -> buildEventDataDto(event, host))
+                .toList();
 
         return responseProvider.event().eventDataList(eventDataDtoList);
     }
@@ -112,12 +98,9 @@ public class EventService {
         }
 
         Long userId = sessionManager.getUserIdFromSession(sessionId);
-        String host = userRepository.getReferenceById(userId).getName();
+        String host = userDataService.tryGetUsernameById(userId);
 
-        List<Event> events = sortMethodFunctionMap
-                .getOrDefault(eventSortMethod, eventRepository::findAllEventsByParticipantId)
-                .apply(userId);
-
+        var events = eventDataService.findUserEventsSorted(userId, eventSortMethod);
         List<EventDataDto> eventDataDtoList = events.stream().map(event -> buildEventDataDto(event, host)).toList();
 
         return responseProvider.event().eventDataList(eventDataDtoList);
@@ -129,14 +112,19 @@ public class EventService {
         }
 
         Long userId = sessionManager.getUserIdFromSession(sessionId);
-        Event event = eventRepository.findEventById(eventId);
-        List<Long> participants = participantsRepository.findAllByEventId(eventId);
+        Long hostId = eventDataService.tryFindEventHostId(eventId);
+        Event event = eventDataService.tryFindEventById(eventId);
+        List<Long> participantIds = participantDataService.findEventParticipantsIds(eventId);
 
-        if (!event.getHostId().equals(userId) && !participants.contains(userId)) {
+        if (event == null) {
+            return responseProvider.event().eventNotFound(eventId);
+        }
+
+        if (!hostId.equals(userId) && !participantIds.contains(userId)) {
             return responseProvider.general().unauthorized();
         }
 
-        String host = userRepository.getReferenceById(userId).getName();
+        String host = userDataService.tryGetUsernameById(hostId);
         return responseProvider.event().eventData(buildEventDataDto(event, host));
     }
 
@@ -148,7 +136,7 @@ public class EventService {
         }
 
         Long userId = sessionManager.getUserIdFromSession(sessionId);
-        Event event = eventRepository.findEventById(eventId);
+        Event event = eventDataService.tryFindEventById(eventId);
 
         if (!event.getHostId().equals(userId)) {
             return responseProvider.general().unauthorized();
@@ -160,9 +148,8 @@ public class EventService {
         updateIfNotNull(event::setTime, time);
 
         if (participants != null) {
-            participantsRepository.deleteAllByEventId(eventId);
-            List<Participant> participantList = buildParticipantsList(participants, eventId);
-            participantsRepository.saveAll(participantList);
+            participantDataService.deleteAllEventParticipants(eventId);
+            participantDataService.inviteParticipantsToEvent(eventId, participants);
         }
 
         return responseProvider.general().success();
@@ -174,29 +161,21 @@ public class EventService {
         }
 
         Long userId = sessionManager.getUserIdFromSession(sessionId);
-        String host = userRepository.getReferenceById(userId).getName();
-        List<Event> events = eventRepository.findAllEventsByUserIdAndLocation(userId, location);
-        List<EventDataDto> eventDataDtoList = events.stream().map(event -> buildEventDataDto(event, host)).toList();
+        String host = userDataService.tryGetUsernameById(userId);
+        List<Event> events = eventDataService.findAllEventsByUserIdAndLocation(userId, location);
+        List<EventDataDto> eventDataDtoList = events
+                .stream()
+                .map(event -> buildEventDataDto(event, host))
+                .toList();
+
         return responseProvider.event().eventDataList(eventDataDtoList);
     }
 
     private EventDataDto buildEventDataDto(Event event, String host) {
-        List<Long> participantsIds = participantsRepository.findAllByEventId(event.getId());
-        List<String> participantsNames = new ArrayList<>();
-
-        for (Long participantId : participantsIds) {
-            participantsNames.add(userRepository.findUserById(participantId).getName());
-        }
+        var participantsNames = participantDataService.findEventParticipantsNames(event.getId());
 
         return (new EventDataDto(event.getId(), event.getName(), host, event.getDescription(),
                 event.getLocation(), event.getTime(), event.getCreationTime(), participantsNames));
-    }
-
-    private List<Participant> buildParticipantsList(List<String> users, Long eventId) {
-        return users
-                .stream()
-                .map(user -> new Participant(eventId, userRepository.findUserByName(user).getId()))
-                .toList();
     }
 
     private <T> void updateIfNotNull(Consumer<T> setter, T value) {

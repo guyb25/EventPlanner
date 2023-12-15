@@ -15,7 +15,7 @@ public class LoginAccountTest extends BaseAccountServiceTest {
         String wrongUsername = "wrongUsername";
         String wrongPassword = "wrongPassword";
 
-        when(userRepository.existsByNameAndPassword(wrongUsername, wrongPassword)).thenReturn(false);
+        when(userDataService.doUsernameAndPasswordMatch(wrongUsername, wrongPassword)).thenReturn(false);
         ServiceResponse expectedResponse = responseProvider.account().wrongUsernameOrPassword();
 
         // Act
@@ -23,7 +23,6 @@ public class LoginAccountTest extends BaseAccountServiceTest {
 
         // Assert
         assertThat(actualResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
-        verify(userRepository, never()).findUserByName(wrongUsername);
         verify(sessionManager, never()).createSession(any());
     }
 
@@ -33,8 +32,8 @@ public class LoginAccountTest extends BaseAccountServiceTest {
         String sessionIdStub = "sessionIdStub";
         User userStub = new User("validUsername", "validPassword", "validEmail", 123L);
 
-        when(userRepository.existsByNameAndPassword(userStub.getName(), userStub.getPassword())).thenReturn(true);
-        when(userRepository.findUserByName(userStub.getName())).thenReturn(userStub);
+        when(userDataService.doUsernameAndPasswordMatch(userStub.getName(), userStub.getPassword())).thenReturn(true);
+        when(userDataService.tryGetUserIdByName(userStub.getName())).thenReturn(userStub.getId());
         when(sessionManager.createSession(userStub.getId())).thenReturn(sessionIdStub);
 
         ServiceResponse expectedResponse = responseProvider.session().sessionCreated(sessionIdStub);
