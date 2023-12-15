@@ -1,11 +1,8 @@
 package com.eventPlanner.endpoints.events.eventService;
 
-import com.eventPlanner.dummyBuilders.UniqueValueGenerator;
+import com.eventPlanner.testUtils.UniqueValueGenerator;
 import com.eventPlanner.models.dtos.events.DeleteEventDto;
-import com.eventPlanner.models.schemas.Event;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;

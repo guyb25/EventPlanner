@@ -1,6 +1,6 @@
 package com.eventPlanner.endpoints.events.eventService;
 
-import com.eventPlanner.dummyBuilders.UniqueValueGenerator;
+import com.eventPlanner.testUtils.UniqueValueGenerator;
 import com.eventPlanner.models.dtos.events.RequestSpecificEventDto;
 import org.junit.jupiter.api.Test;
 

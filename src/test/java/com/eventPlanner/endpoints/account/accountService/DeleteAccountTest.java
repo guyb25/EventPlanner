@@ -2,7 +2,7 @@ package com.eventPlanner.endpoints.account.accountService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.eventPlanner.dummyBuilders.UniqueValueGenerator;
+import com.eventPlanner.testUtils.UniqueValueGenerator;
 import com.eventPlanner.models.dtos.account.DeleteAccountDto;
 import org.junit.jupiter.api.Test;
 

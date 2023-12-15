@@ -1,9 +1,9 @@
-package com.eventPlanner.dummyBuilders;
+package com.eventPlanner.testUtils.dummyBuilders;
 
 import com.eventPlanner.models.dtos.events.EventDataDto;
 import com.eventPlanner.models.schemas.Event;
+import com.eventPlanner.testUtils.UniqueValueGenerator;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class EventDtoDummyBuilder {

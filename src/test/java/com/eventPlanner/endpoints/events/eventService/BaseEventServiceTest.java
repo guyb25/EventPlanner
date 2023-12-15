@@ -1,9 +1,9 @@
 package com.eventPlanner.endpoints.events.eventService;
 
 import com.eventPlanner.dataAccess.userEvents.services.EventDataService;
-import com.eventPlanner.dummyBuilders.EventDtoDummyBuilder;
+import com.eventPlanner.testUtils.dummyBuilders.EventDtoDummyBuilder;
 import com.eventPlanner.endpoints.BaseEndpointTest;
-import com.eventPlanner.dummyBuilders.EventDummyBuilder;
+import com.eventPlanner.testUtils.dummyBuilders.EventDummyBuilder;
 import com.eventPlanner.endpoints.events.EventService;
 import com.eventPlanner.models.dtos.events.EventDataDto;
 import com.eventPlanner.models.schemas.Event;

@@ -1,6 +1,6 @@
 package com.eventPlanner.endpoints.account.accountService;
 
-import com.eventPlanner.dummyBuilders.UniqueValueGenerator;
+import com.eventPlanner.testUtils.UniqueValueGenerator;
 import com.eventPlanner.models.dtos.account.LogoutAccountDto;
 import org.junit.jupiter.api.Test;
 
