@@ -36,7 +36,7 @@ public class AccountService {
             return responseProvider.account().emailTaken();
         }
 
-        this.usersRepo.save(new User(name, password, email));
+        usersRepo.save(new User(name, password, email));
         return responseProvider.account().userCreated();
     }
 
@@ -56,7 +56,7 @@ public class AccountService {
             return responseProvider.session().invalidSession();
         }
 
-        this.sessionManager.endSession(sessionId);
+        sessionManager.endSession(sessionId);
         return responseProvider.session().sessionEnded();
     }
 
