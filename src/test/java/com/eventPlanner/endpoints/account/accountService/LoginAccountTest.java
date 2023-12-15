@@ -1,5 +1,6 @@
 package com.eventPlanner.endpoints.account.accountService;
 
+import com.eventPlanner.models.dtos.account.LoginAccountDto;
 import com.eventPlanner.models.schemas.User;
 import com.eventPlanner.models.serviceResponse.ServiceResponse;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,10 @@ public class LoginAccountTest extends BaseAccountServiceTest {
         ServiceResponse expectedResponse = responseProvider.account().wrongUsernameOrPassword();
 
         // Act
-        ServiceResponse actualResponse = accountService.loginAccount(wrongUsername, wrongPassword);
+        ServiceResponse actualResponse = accountService.loginAccount(new LoginAccountDto(
+                wrongUsername,
+                wrongPassword
+        ));
 
         // Assert
         assertThat(actualResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
@@ -39,7 +43,10 @@ public class LoginAccountTest extends BaseAccountServiceTest {
         ServiceResponse expectedResponse = responseProvider.session().sessionCreated(sessionIdStub);
 
         // Act
-        ServiceResponse actualResponse = accountService.loginAccount(userStub.getName(), userStub.getPassword());
+        ServiceResponse actualResponse = accountService.loginAccount(new LoginAccountDto(
+                userStub.getName(),
+                userStub.getPassword()
+        ));
 
         // Assert
         assertThat(actualResponse).usingRecursiveComparison().isEqualTo(expectedResponse);

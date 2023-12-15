@@ -21,6 +21,10 @@ public class EventResponseProvider {
         return new ServiceResponse("Event not found: " + eventId, HttpStatus.NOT_FOUND);
     }
 
+    public ServiceResponse participantsNotExist() {
+        return new ServiceResponse("Some of the participants are invalid.", HttpStatus.NOT_FOUND);
+    }
+
     public ServiceResponse eventDataList(List<EventDataDto> eventDataDtoList) {
         return new ServiceResponse(eventDataDtoList, HttpStatus.OK);
     }

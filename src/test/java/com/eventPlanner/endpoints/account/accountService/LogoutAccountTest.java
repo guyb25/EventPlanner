@@ -1,5 +1,6 @@
 package com.eventPlanner.endpoints.account.accountService;
 
+import com.eventPlanner.models.dtos.account.LogoutAccountDto;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -8,15 +9,16 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
 public class LogoutAccountTest extends BaseAccountServiceTest {
+    private final LogoutAccountDto logoutAccountDto = new LogoutAccountDto("sessionIdStub");
+
     @Test
     public void testLogoutAccount_InvalidSession_SessionNotDeletedAndReturnFailure() {
         // Arrange
-        String sessionIdStub = "sessionIdStub";
-        when(sessionManager.missing(sessionIdStub)).thenReturn(true);
+        when(sessionManager.missing(logoutAccountDto.sessionId())).thenReturn(true);
         var expectedResponse = responseProvider.session().invalidSession();
 
         // Act
-        var actualResponse = accountService.logoutAccount(sessionIdStub);
+        var actualResponse = accountService.logoutAccount(logoutAccountDto);
 
         // Assert
         assertThat(actualResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
@@ -26,12 +28,12 @@ public class LogoutAccountTest extends BaseAccountServiceTest {
     @Test
     public void testLoginAccount_ValidSession_SessionDeletedAndReturnSuccess() {
         // Arrange
-        String sessionIdStub = "sessionIdStub";
+        String sessionIdStub = logoutAccountDto.sessionId();
         when(sessionManager.missing(sessionIdStub)).thenReturn(false);
         var expectedResponse = responseProvider.session().sessionEnded();
 
         // Act
-        var actualResponse = accountService.logoutAccount(sessionIdStub);
+        var actualResponse = accountService.logoutAccount(logoutAccountDto);
 
         // Assert
         assertThat(actualResponse).usingRecursiveComparison().isEqualTo(expectedResponse);

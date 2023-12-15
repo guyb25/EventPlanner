@@ -3,6 +3,10 @@ package com.eventPlanner.endpoints.account;
 import com.eventPlanner.dataAccess.sessions.SessionManager;
 import com.eventPlanner.dataAccess.userEvents.services.ParticipantDataService;
 import com.eventPlanner.dataAccess.userEvents.services.UserDataService;
+import com.eventPlanner.models.dtos.account.CreateAccountDto;
+import com.eventPlanner.models.dtos.account.DeleteAccountDto;
+import com.eventPlanner.models.dtos.account.LoginAccountDto;
+import com.eventPlanner.models.dtos.account.LogoutAccountDto;
 import com.eventPlanner.models.schemas.User;
 import com.eventPlanner.models.serviceResponse.ServiceResponse;
 import com.eventPlanner.models.serviceResponse.providers.ResponseProvider;
@@ -27,7 +31,11 @@ public class AccountService {
         this.participantDataService = participantDataService;
     }
 
-    public ServiceResponse createAccount(String name, String password, String email) {
+    public ServiceResponse createAccount(CreateAccountDto createAccountDto) {
+        var name = createAccountDto.name();
+        var email = createAccountDto.email();
+        var password = createAccountDto.password();
+
         if (userDataService.isUsernameTaken(name)) {
             return responseProvider.account().usernameTaken();
         }
@@ -41,36 +49,36 @@ public class AccountService {
     }
 
     @Transactional
-    public ServiceResponse loginAccount(String name, String password) {
-        if (!userDataService.doUsernameAndPasswordMatch(name, password)) {
+    public ServiceResponse loginAccount(LoginAccountDto loginAccountDto) {
+        if (!userDataService.doUsernameAndPasswordMatch(loginAccountDto.name(), loginAccountDto.password())) {
             return responseProvider.account().wrongUsernameOrPassword();
         }
 
-        Long userId = userDataService.tryGetUserIdByName(name);
+        Long userId = userDataService.tryGetUserIdByName(loginAccountDto.name());
 
         String sessionId = sessionManager.createSession(userId);
         return responseProvider.session().sessionCreated(sessionId);
     }
 
-    public ServiceResponse logoutAccount(String sessionId) {
-        if (sessionManager.missing(sessionId)) {
+    public ServiceResponse logoutAccount(LogoutAccountDto logoutAccountDto) {
+        if (sessionManager.missing(logoutAccountDto.sessionId())) {
             return responseProvider.session().invalidSession();
         }
 
-        sessionManager.endSession(sessionId);
+        sessionManager.endSession(logoutAccountDto.sessionId());
         return responseProvider.session().sessionEnded();
     }
 
     @Transactional
-    public ServiceResponse deleteAccount(String sessionId) {
-        if (sessionManager.missing(sessionId)) {
+    public ServiceResponse deleteAccount(DeleteAccountDto deleteAccountDto) {
+        if (sessionManager.missing(deleteAccountDto.sessionId())) {
             return responseProvider.session().invalidSession();
         }
 
-        Long userId = sessionManager.getUserIdFromSession(sessionId);
+        Long userId = sessionManager.getUserIdFromSession(deleteAccountDto.sessionId());
         participantDataService.deleteAllByUserId(userId);
         userDataService.deleteUserById(userId);
-        sessionManager.endSession(sessionId);
+        sessionManager.endSession(deleteAccountDto.sessionId());
         return responseProvider.account().userDeleted();
     }
 }

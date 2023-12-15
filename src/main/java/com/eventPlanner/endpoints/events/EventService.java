@@ -4,7 +4,7 @@ import com.eventPlanner.dataAccess.sessions.SessionManager;
 import com.eventPlanner.dataAccess.userEvents.services.EventDataService;
 import com.eventPlanner.dataAccess.userEvents.services.ParticipantDataService;
 import com.eventPlanner.dataAccess.userEvents.services.UserDataService;
-import com.eventPlanner.models.dtos.events.EventDataDto;
+import com.eventPlanner.models.dtos.events.*;
 import com.eventPlanner.models.schemas.Event;
 import com.eventPlanner.models.serviceResponse.ServiceResponse;
 import com.eventPlanner.models.serviceResponse.providers.ResponseProvider;
@@ -36,52 +36,58 @@ public class EventService {
     }
 
     @Transactional
-    public ServiceResponse createEvent(String name, String sessionId, String description,
-                                       String location, LocalDateTime time, List<String> participants) {
-        if (sessionManager.missing(sessionId)) {
+    public ServiceResponse createEvent(CreateEventDto createEventDto) {
+        if (sessionManager.missing(createEventDto.sessionId())) {
             return responseProvider.session().invalidSession();
         }
 
-        Long hostId = sessionManager.getUserIdFromSession(sessionId);
+        Long hostId = sessionManager.getUserIdFromSession(createEventDto.sessionId());
 
-        if (!userDataService.doAllParticipantsExistByNames(participants)) {
-            throw new IllegalArgumentException("invalid participants list");
+        if (!userDataService.doAllParticipantsExistByNames(createEventDto.participants())) {
+            return responseProvider.event().participantsNotExist();
         }
 
-        var event = eventDataService.scheduleEvent(new Event(name, hostId, description, location, time, LocalDateTime.now()));
-        participantDataService.inviteParticipantsToEvent(event.getId(), participants);
+        var event = eventDataService.scheduleEvent(new Event(
+                createEventDto.name(),
+                hostId,
+                createEventDto.description(),
+                createEventDto.location(),
+                createEventDto.time(),
+                LocalDateTime.now()));
+
+        participantDataService.inviteParticipantsToEvent(event.getId(), createEventDto.participants());
 
         return responseProvider.event().eventCreated(event.getId());
     }
 
     @Transactional
-    public ServiceResponse deleteEvent(Long eventId, String sessionId) {
-        if (sessionManager.missing(sessionId)) {
+    public ServiceResponse deleteEvent(DeleteEventDto deleteEventDto) {
+        if (sessionManager.missing(deleteEventDto.sessionId())) {
             return responseProvider.session().invalidSession();
         }
 
-        Long userId = sessionManager.getUserIdFromSession(sessionId);
-        Event event = eventDataService.tryFindEventById(eventId);
+        Long userId = sessionManager.getUserIdFromSession(deleteEventDto.sessionId());
+        Event event = eventDataService.tryFindEventById(deleteEventDto.eventId());
 
         if (event == null) {
-            return responseProvider.event().eventNotFound(eventId);
+            return responseProvider.event().eventNotFound(deleteEventDto.eventId());
         }
 
         if (!event.getHostId().equals(userId)) {
             return responseProvider.general().unauthorized();
         }
 
-        eventDataService.deleteEventById(eventId);
-        participantDataService.deleteAllEventParticipants(eventId);
+        eventDataService.deleteEventById(deleteEventDto.eventId());
+        participantDataService.deleteAllEventParticipants(deleteEventDto.eventId());
         return responseProvider.event().eventDeleted();
     }
 
-    public ServiceResponse getOwnedEvents(String sessionId) {
-        if (sessionManager.missing(sessionId)) {
+    public ServiceResponse getOwnedEvents(RequestOwnedEventsDto requestOwnedEventsDto) {
+        if (sessionManager.missing(requestOwnedEventsDto.sessionId())) {
             return responseProvider.session().invalidSession();
         }
 
-        Long userId = sessionManager.getUserIdFromSession(sessionId);
+        Long userId = sessionManager.getUserIdFromSession(requestOwnedEventsDto.sessionId());
         String host = userDataService.tryGetUsernameById(userId);
         List<Event> ownedEvents = eventDataService.findEventsByHostId(userId);
         List<EventDataDto> eventDataDtoList = ownedEvents
@@ -92,21 +98,24 @@ public class EventService {
         return responseProvider.event().eventDataList(eventDataDtoList);
     }
 
-    public ServiceResponse getAuthorizedEvents(String sessionId, EventSortMethod eventSortMethod) {
-        if (sessionManager.missing(sessionId)) {
+    public ServiceResponse getAuthorizedEvents(RequestAuthorizedEventsDto requestAuthorizedEventsDto) {
+        if (sessionManager.missing(requestAuthorizedEventsDto.sessionId())) {
             return responseProvider.session().invalidSession();
         }
 
-        Long userId = sessionManager.getUserIdFromSession(sessionId);
+        Long userId = sessionManager.getUserIdFromSession(requestAuthorizedEventsDto.sessionId());
         String host = userDataService.tryGetUsernameById(userId);
 
-        var events = eventDataService.findUserEventsSorted(userId, eventSortMethod);
+        var events = eventDataService.findUserEventsSorted(userId, requestAuthorizedEventsDto.eventSortMethod());
         List<EventDataDto> eventDataDtoList = events.stream().map(event -> buildEventDataDto(event, host)).toList();
 
         return responseProvider.event().eventDataList(eventDataDtoList);
     }
 
-    public ServiceResponse getSpecificEvent(String sessionId, Long eventId) {
+    public ServiceResponse getSpecificEvent(RequestSpecificEventDto requestSpecificEventDto) {
+        var sessionId = requestSpecificEventDto.sessionId();
+        var eventId = requestSpecificEventDto.eventId();
+
         if (sessionManager.missing(sessionId)) {
             return responseProvider.session().invalidSession();
         }
@@ -129,40 +138,39 @@ public class EventService {
     }
 
     @Transactional
-    public ServiceResponse updateSpecificEvent(String sessionId, Long eventId, String name, String description,
-                                               String location, LocalDateTime time, List<String> participants) {
-        if (sessionManager.missing(sessionId)) {
+    public ServiceResponse updateSpecificEvent(UpdateEventDto updateEventDto) {
+        if (sessionManager.missing(updateEventDto.sessionId())) {
             return responseProvider.session().invalidSession();
         }
 
-        Long userId = sessionManager.getUserIdFromSession(sessionId);
-        Event event = eventDataService.tryFindEventById(eventId);
+        Long userId = sessionManager.getUserIdFromSession(updateEventDto.sessionId());
+        Event event = eventDataService.tryFindEventById(updateEventDto.eventId());
 
         if (!event.getHostId().equals(userId)) {
             return responseProvider.general().unauthorized();
         }
 
-        updateIfNotNull(event::setName, name);
-        updateIfNotNull(event::setDescription, description);
-        updateIfNotNull(event::setLocation, location);
-        updateIfNotNull(event::setTime, time);
+        updateIfNotNull(event::setName, updateEventDto.name());
+        updateIfNotNull(event::setDescription, updateEventDto.description());
+        updateIfNotNull(event::setLocation, updateEventDto.location());
+        updateIfNotNull(event::setTime, updateEventDto.time());
 
-        if (participants != null) {
-            participantDataService.deleteAllEventParticipants(eventId);
-            participantDataService.inviteParticipantsToEvent(eventId, participants);
+        if (updateEventDto.participants() != null) {
+            participantDataService.deleteAllEventParticipants(updateEventDto.eventId());
+            participantDataService.inviteParticipantsToEvent(updateEventDto.eventId(), updateEventDto.participants());
         }
 
         return responseProvider.general().success();
     }
 
-    public ServiceResponse getLocationEvents(String sessionId, String location) {
-        if (sessionManager.missing(sessionId)) {
+    public ServiceResponse getLocationEvents(RequestLocationEventsDto requestLocationEventsDto) {
+        if (sessionManager.missing(requestLocationEventsDto.sessionId())) {
             return responseProvider.session().invalidSession();
         }
 
-        Long userId = sessionManager.getUserIdFromSession(sessionId);
+        Long userId = sessionManager.getUserIdFromSession(requestLocationEventsDto.sessionId());
         String host = userDataService.tryGetUsernameById(userId);
-        List<Event> events = eventDataService.findAllEventsByUserIdAndLocation(userId, location);
+        List<Event> events = eventDataService.findAllEventsByUserIdAndLocation(userId, requestLocationEventsDto.location());
         List<EventDataDto> eventDataDtoList = events
                 .stream()
                 .map(event -> buildEventDataDto(event, host))

@@ -1,5 +1,6 @@
 package com.eventPlanner.endpoints.account.accountService;
 
+import com.eventPlanner.models.dtos.account.CreateAccountDto;
 import com.eventPlanner.models.schemas.User;
 import com.eventPlanner.models.serviceResponse.ServiceResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +33,11 @@ public class CreateAccountTest extends BaseAccountServiceTest {
         ServiceResponse expectedResponse = responseProvider.account().emailTaken();
 
         // Act
-        ServiceResponse actualResponse = accountService.createAccount(availableUsernameStub, validPassword, takenEmailStub);
+        ServiceResponse actualResponse = accountService.createAccount(new CreateAccountDto(
+                availableUsernameStub,
+                validPassword,
+                takenEmailStub
+        ));
 
         // Assert
         assertThat(actualResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
@@ -45,7 +50,11 @@ public class CreateAccountTest extends BaseAccountServiceTest {
         ServiceResponse expectedResponse = responseProvider.account().usernameTaken();
 
         // Act
-        ServiceResponse actualResponse = accountService.createAccount(takenUsernameStub, validPassword, availableEmailStub);
+        ServiceResponse actualResponse = accountService.createAccount(new CreateAccountDto(
+                takenUsernameStub,
+                validPassword,
+                availableEmailStub
+        ));
 
         // Assert
         assertThat(actualResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
@@ -60,7 +69,11 @@ public class CreateAccountTest extends BaseAccountServiceTest {
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
 
         // Act
-        ServiceResponse actualResponse = accountService.createAccount(availableUsernameStub, validPassword, availableEmailStub);
+        ServiceResponse actualResponse = accountService.createAccount(new CreateAccountDto(
+                availableUsernameStub,
+                validPassword,
+                availableEmailStub
+        ));
 
         // Assert
         verify(userDataService, times(1)).saveUser(userCaptor.capture());

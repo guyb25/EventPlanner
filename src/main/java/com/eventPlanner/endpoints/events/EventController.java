@@ -12,45 +12,45 @@ import java.util.List;
 @RequestMapping("/events")
 @Tag(name = "Event Management")
 public class EventController {
-    private final EventServiceProxy eventServiceProxy;
+    private final EventService eventService;
 
     @Autowired
-    public EventController(EventServiceProxy eventServiceProxy) {
-        this.eventServiceProxy = eventServiceProxy;
+    public EventController(EventService eventServiceProxy) {
+        this.eventService = eventServiceProxy;
     }
 
     @PostMapping("/create")
     public ResponseEntity<String> createEvent(CreateEventDto createEventDto) {
-        return eventServiceProxy.createEvent(createEventDto).toResponse();
+        return eventService.createEvent(createEventDto).toResponse();
     }
 
     @DeleteMapping("/delete/specific")
     public ResponseEntity<String> deleteEvent(DeleteEventDto deleteEventDto) {
-        return eventServiceProxy.deleteEvent(deleteEventDto).toResponse();
+        return eventService.deleteEvent(deleteEventDto).toResponse();
     }
 
     @PostMapping("/retrieve/owned")
     public ResponseEntity<List<EventDataDto>> retrieveOwnedEvents(RequestOwnedEventsDto requestOwnedEventsDto) {
-        return eventServiceProxy.getOwnedEvents(requestOwnedEventsDto).toResponse();
+        return eventService.getOwnedEvents(requestOwnedEventsDto).toResponse();
     }
 
     @PostMapping("/retrieve/authorized")
     public ResponseEntity<List<EventDataDto>> retrieveAuthorizedEvents(RequestAuthorizedEventsDto requestAuthorizedEventsDto) {
-        return eventServiceProxy.getAuthorizedEvents(requestAuthorizedEventsDto).toResponse();
+        return eventService.getAuthorizedEvents(requestAuthorizedEventsDto).toResponse();
     }
 
     @PostMapping("/retrieve/specific")
     public ResponseEntity<EventDataDto> retrieveSpecificEvent(RequestSpecificEventDto requestSpecificEventDto) {
-        return eventServiceProxy.getSpecificEvent(requestSpecificEventDto).toResponse();
+        return eventService.getSpecificEvent(requestSpecificEventDto).toResponse();
     }
 
     @PutMapping("/update/specific")
     public ResponseEntity<String> updateSpecificEvent(UpdateEventDto updateEventDto) {
-        return eventServiceProxy.updateSpecificEvent(updateEventDto).toResponse();
+        return eventService.updateSpecificEvent(updateEventDto).toResponse();
     }
 
     @PostMapping("/retrieve/location")
     public ResponseEntity<List<EventDataDto>> retrieveLocationEvents(RequestLocationEventsDto requestLocationEventsDto) {
-        return eventServiceProxy.getLocationEvents(requestLocationEventsDto).toResponse();
+        return eventService.getLocationEvents(requestLocationEventsDto).toResponse();
     }
 }

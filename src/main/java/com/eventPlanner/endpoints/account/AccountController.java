@@ -13,30 +13,30 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/accounts")
 @Tag(name = "Account Management")
 public class AccountController {
-    private final AccountServiceProxy accountServiceProxy;
+    private final AccountService accountService;
 
     @Autowired
-    public AccountController(AccountServiceProxy accountServiceProxy) {
-        this.accountServiceProxy = accountServiceProxy;
+    public AccountController(AccountService accountService) {
+        this.accountService = accountService;
     }
 
     @PostMapping("/create")
     public ResponseEntity<String> createAccount(@RequestBody CreateAccountDto createAccountDto) {
-        return accountServiceProxy.createAccount(createAccountDto).toResponse();
+        return accountService.createAccount(createAccountDto).toResponse();
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> loginAccount(@RequestBody LoginAccountDto loginAccountDto) {
-        return accountServiceProxy.loginAccount(loginAccountDto).toResponse();
+        return accountService.loginAccount(loginAccountDto).toResponse();
     }
 
     @DeleteMapping("/logout")
     public ResponseEntity<String> logoutAccount(@RequestBody LogoutAccountDto logoutAccountDto) {
-        return accountServiceProxy.logoutAccount(logoutAccountDto).toResponse();
+        return accountService.logoutAccount(logoutAccountDto).toResponse();
     }
 
     @DeleteMapping("/terminate")
     public ResponseEntity<String> deleteAccount(@RequestBody DeleteAccountDto deleteAccountDto) {
-        return accountServiceProxy.deleteAccount(deleteAccountDto).toResponse();
+        return accountService.deleteAccount(deleteAccountDto).toResponse();
     }
 }
