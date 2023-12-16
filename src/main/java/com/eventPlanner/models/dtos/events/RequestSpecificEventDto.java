@@ -1,4 +1,6 @@
 package com.eventPlanner.models.dtos.events;
 
-public record RequestSpecificEventDto(String sessionId, Long eventId) {
+import jakarta.validation.constraints.NotEmpty;
+
+public record RequestSpecificEventDto(@NotEmpty String sessionId, @NotEmpty Long eventId) {
 }

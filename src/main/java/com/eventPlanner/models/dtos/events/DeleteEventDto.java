@@ -1,4 +1,6 @@
 package com.eventPlanner.models.dtos.events;
 
-public record DeleteEventDto(Long eventId, String sessionId) {
+import jakarta.validation.constraints.NotEmpty;
+
+public record DeleteEventDto(@NotEmpty Long eventId, @NotEmpty String sessionId) {
 }

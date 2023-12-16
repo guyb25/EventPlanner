@@ -1,4 +1,6 @@
 package com.eventPlanner.models.dtos.account;
 
-public record LogoutAccountDto(String sessionId) {
+import jakarta.validation.constraints.NotEmpty;
+
+public record LogoutAccountDto(@NotEmpty String sessionId) {
 }

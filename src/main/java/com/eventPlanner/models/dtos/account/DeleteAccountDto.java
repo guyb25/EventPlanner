@@ -1,4 +1,6 @@
 package com.eventPlanner.models.dtos.account;
 
-public record DeleteAccountDto(String sessionId) {
+import jakarta.validation.constraints.NotEmpty;
+
+public record DeleteAccountDto(@NotEmpty String sessionId) {
 }

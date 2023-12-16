@@ -32,9 +32,9 @@ public class AccountService {
     }
 
     public ServiceResponse createAccount(CreateAccountDto createAccountDto) {
-        var name = createAccountDto.name();
-        var email = createAccountDto.email();
-        var password = createAccountDto.password();
+        var name = createAccountDto.getName();
+        var email = createAccountDto.getEmail();
+        var password = createAccountDto.getPassword();
 
         if (userDataService.isUsernameTaken(name)) {
             return responseProvider.account().usernameTaken();
