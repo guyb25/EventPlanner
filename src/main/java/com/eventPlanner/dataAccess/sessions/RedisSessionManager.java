@@ -19,7 +19,7 @@ public class RedisSessionManager implements SessionManager {
     public String createSession(Long userId) {
         String sessionId = UUID.randomUUID().toString();
         jedis.set(SESSION_PREFIX + sessionId, userId.toString());
-        jedis.expire(SESSION_PREFIX + sessionId, expirationTimeSeconds); // 30 * 60 seconds
+        jedis.expire(SESSION_PREFIX + sessionId, expirationTimeSeconds);
         return sessionId;
     }
 
