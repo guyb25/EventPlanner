@@ -1,6 +1,6 @@
-package com.eventPlanner.endpoints.account.accountService;
+package com.eventPlanner.unit.endpoints.account.accountService;
 
-import com.eventPlanner.endpoints.BaseEndpointTest;
+import com.eventPlanner.unit.endpoints.BaseEndpointTest;
 import com.eventPlanner.endpoints.account.AccountService;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;

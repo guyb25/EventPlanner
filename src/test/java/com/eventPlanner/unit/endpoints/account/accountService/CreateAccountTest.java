@@ -1,4 +1,4 @@
-package com.eventPlanner.endpoints.account.accountService;
+package com.eventPlanner.unit.endpoints.account.accountService;
 
 import com.eventPlanner.models.dtos.account.CreateAccountDto;
 import com.eventPlanner.models.schemas.User;

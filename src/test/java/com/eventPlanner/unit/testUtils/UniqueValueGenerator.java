@@ -1,4 +1,4 @@
-package com.eventPlanner.testUtils;
+package com.eventPlanner.unit.testUtils;
 
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
