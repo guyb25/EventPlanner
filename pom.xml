@@ -77,6 +77,8 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
+
+        <finalName>EventPlanner</finalName>
     </build>
 
 </project>
