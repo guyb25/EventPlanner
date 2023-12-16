@@ -1,4 +1,4 @@
-package com.eventPlanner.models.serviceResponse.providers;
+package com.eventPlanner.models.responses.providers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package com.eventPlanner.models.serviceResponse;
+package com.eventPlanner.models.responses;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

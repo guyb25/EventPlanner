@@ -1,7 +1,7 @@
-package com.eventPlanner.models.serviceResponse.providers;
+package com.eventPlanner.models.responses.providers;
 
 import com.eventPlanner.models.dtos.events.EventDataDto;
-import com.eventPlanner.models.serviceResponse.ServiceResponse;
+import com.eventPlanner.models.responses.ServiceResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 

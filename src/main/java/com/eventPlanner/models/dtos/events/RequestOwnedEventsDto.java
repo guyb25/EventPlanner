@@ -1,4 +1,6 @@
 package com.eventPlanner.models.dtos.events;
 
-public record RequestOwnedEventsDto(String sessionId) {
+import jakarta.validation.constraints.NotEmpty;
+
+public record RequestOwnedEventsDto(@NotEmpty(message = "sessionId is required") String sessionId) {
 }
