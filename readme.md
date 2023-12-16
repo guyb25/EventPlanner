@@ -24,7 +24,8 @@ cd EventPlanner/
 ```
 
 ### Running with Docker
-For a quickstart you can run the whole system by executing the command: 
+For a quickstart, make sure you have port 8080 available on your machine.
+you can run the whole system by executing the command:
 ```bash
 docker compose up
 ```
@@ -41,5 +42,11 @@ Make sure to also run the API itself either through your IDE, or by running:
 mvn package
 java -jar target/EventPlanner.jar
 ```
+Make sure you have the following ports available:
+* 8080
+* 5432
+* 6379  
 
+## API Endpoints Documentation
 You can access the swagger documentation at ``http://localhost:8080``
+after running the API.
