@@ -1,11 +1,11 @@
 # Event Planner API
 This API is used for event planning. 
-You can use it to schedule events, and invite your friends to them.
+You can use it to schedule events, invite your friends to the events, and get event notifications.
 
 ## Architecture
 The project comprises the following key components:
 
-* **Sessions Redis:** Redis used to store user sessions.
+* **Redis:** Redis used to store user sessions and log event notifications history.
 * **PostgreSQL:** database utilized for storing information about registered users and event details.
 * **EventPlanner:** The primary API serving as the core component. 
 It orchestrates the functionality of the entire system.

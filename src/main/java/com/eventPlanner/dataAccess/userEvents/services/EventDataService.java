@@ -48,12 +48,11 @@ public class EventDataService {
         return eventRepository.findEventsByHostId(hostId);
     }
 
-    public Long tryFindEventHostId(Long id) {
-        var event = eventRepository.findEventById(id);
-        return event == null ? null : event.getHostId();
-    }
-
     public List<Event> findAllEventsByUserIdAndLocation(Long userId, String location) {
         return eventRepository.findAllEventsByUserIdAndLocation(userId, location);
+    }
+
+    public List<Event> findAllEventsThatOccurBefore(LocalDateTime time) {
+        return eventRepository.findAllEventsThatWillOccurBefore(time);
     }
 }

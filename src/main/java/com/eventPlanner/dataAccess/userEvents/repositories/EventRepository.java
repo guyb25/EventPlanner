@@ -4,6 +4,7 @@ import com.eventPlanner.models.schemas.Event;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
@@ -40,4 +41,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "INNER JOIN User user ON participant.id.userId = user.id " +
             "WHERE user.id = :userId AND event.location = :location")
     List<Event> findAllEventsByUserIdAndLocation(Long userId, String location);
+
+    @Query("SELECT event FROM Event event " +
+            "WHERE event.time <= :time")
+    List<Event> findAllEventsThatWillOccurBefore(LocalDateTime time);
 }
