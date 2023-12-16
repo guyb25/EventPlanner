@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record UpdateEventDto(
-        @NotEmpty String sessionId,
-        @NotEmpty Long eventId,
+        @NotEmpty(message = "sessionId is required") String sessionId,
+        @NotEmpty(message = "eventId is required") Long eventId,
         String name,
         String description,
         String location,
