@@ -3,10 +3,8 @@ package com.eventPlanner.endpoints;
 import com.eventPlanner.dataAccess.sessions.SessionManager;
 import com.eventPlanner.dataAccess.userEvents.services.ParticipantDataService;
 import com.eventPlanner.dataAccess.userEvents.services.UserDataService;
-import com.eventPlanner.models.serviceResponse.providers.ResponseProvider;
-import org.junit.jupiter.api.BeforeEach;
+import com.eventPlanner.models.responses.providers.ResponseProvider;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import static org.mockito.Mockito.when;
 

@@ -3,7 +3,7 @@ package com.eventPlanner.endpoints.account.accountService;
 import com.eventPlanner.testUtils.UniqueValueGenerator;
 import com.eventPlanner.models.dtos.account.LoginAccountDto;
 import com.eventPlanner.models.schemas.User;
-import com.eventPlanner.models.serviceResponse.ServiceResponse;
+import com.eventPlanner.models.responses.ServiceResponse;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

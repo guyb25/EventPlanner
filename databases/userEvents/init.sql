@@ -1,20 +1,20 @@
 -- Create users table
 CREATE TABLE users (
    id SERIAL PRIMARY KEY,
-   name VARCHAR(100) UNIQUE,
-   password VARCHAR(100),
-   email VARCHAR(100) UNIQUE
+   name VARCHAR(100) UNIQUE NOT NULL,
+   password VARCHAR(100) NOT NULL,
+   email VARCHAR(100) UNIQUE NOT NULL
 );
 
 -- Create events table
 CREATE TABLE events (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100),
+    name VARCHAR(100) NOT NULL,
     host_id INT NOT NULL,
-    description TEXT,
-    location VARCHAR(100),
-    time TIMESTAMP,
-    creation_time TIMESTAMP,
+    description TEXT NOT NULL,
+    location VARCHAR(100) NOT NULL,
+    time TIMESTAMP NOT NULL,
+    creation_time TIMESTAMP NOT NULL,
     FOREIGN KEY (host_id) REFERENCES users(id)
 );
 

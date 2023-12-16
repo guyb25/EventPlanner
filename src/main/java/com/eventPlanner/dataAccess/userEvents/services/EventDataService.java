@@ -21,6 +21,7 @@ public class EventDataService {
     public EventDataService(EventRepository eventRepository) {
         this.eventRepository = eventRepository;
 
+        sortMethodFunctionMap.put(EventSortMethod.NONE, eventRepository::findAllEventsByParticipantId);
         sortMethodFunctionMap.put(EventSortMethod.DATE, eventRepository::findAllEventsByParticipantIdOrderByTime);
         sortMethodFunctionMap.put(EventSortMethod.CREATION_TIME, eventRepository::findAllEventsByParticipantIdOrderByCreationTime);
         sortMethodFunctionMap.put(EventSortMethod.POPULARITY, eventRepository::findAllEventsByParticipantIdOrderByPopularity);

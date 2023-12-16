@@ -1,6 +1,6 @@
 package com.eventPlanner.endpoints;
 
-import com.eventPlanner.models.serviceResponse.providers.*;
+import com.eventPlanner.models.responses.providers.*;
 
 public class ResponseProviderGenerator {
     public static ResponseProvider generate() {
