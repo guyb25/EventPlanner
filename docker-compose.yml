@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  userevents:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: userevents
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    networks:
+      - event_net
+    volumes:
+      - ./databases/userEvents/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  sessions:
+    image: redis:latest
+    networks:
+      - event_net
+
+  eventplanner:
+    build:
+      context: ./
+    ports:
+      - "8080:8080"
+    networks:
+      - event_net
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://userevents:5432/userevents
+      SPRING_REDIS_HOST: sessions
+
+networks:
+  event_net:
+    driver: bridge
