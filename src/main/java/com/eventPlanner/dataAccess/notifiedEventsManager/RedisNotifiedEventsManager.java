@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 public class RedisNotifiedEventsManager implements NotifiedEventsManager {
     private final Jedis jedis;
     private static final String NOTIFICATION_PREFIX = "notification: ";
+    private static final String NOTIFICATION_SCHEDULED_PREFIX = "notification scheduled: ";
     private final int expirationTimeSeconds;
 
     public RedisNotifiedEventsManager(Jedis jedis, int expirationTimeSeconds) {
@@ -14,6 +15,12 @@ public class RedisNotifiedEventsManager implements NotifiedEventsManager {
         this.expirationTimeSeconds = expirationTimeSeconds;
     }
 
+
+    @Override
+    public void logScheduledNotification(Long eventId) {
+        jedis.set(NOTIFICATION_SCHEDULED_PREFIX + eventId, LocalDateTime.now().toString());
+        jedis.expire(NOTIFICATION_SCHEDULED_PREFIX + eventId, expirationTimeSeconds);
+    }
 
     @Override
     public void logNotification(Long eventId) {
@@ -24,5 +31,10 @@ public class RedisNotifiedEventsManager implements NotifiedEventsManager {
     @Override
     public boolean wasEventNotified(Long eventId) {
         return jedis.exists(NOTIFICATION_PREFIX + eventId);
+    }
+
+    @Override
+    public boolean wasEventNotificationScheduled(Long eventId) {
+        return jedis.exists(NOTIFICATION_SCHEDULED_PREFIX + eventId);
     }
 }
