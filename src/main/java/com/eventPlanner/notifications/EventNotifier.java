@@ -49,7 +49,8 @@ public class EventNotifier {
                     notifyEvent(eventId, participants);
                 }
 
-                else {
+                else if (!notifiedEventsManager.wasEventNotificationScheduled(eventId)) {
+                    notifiedEventsManager.logScheduledNotification(eventId);
                     executorService.schedule(() -> notifyEvent(eventId, participants), delay, TimeUnit.SECONDS);
                 }
             }
