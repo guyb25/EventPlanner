@@ -25,8 +25,9 @@ public class EventService {
     private final EventDataService eventDataService;
 
     @Autowired
-    public EventService(SessionManager sessionManager, ResponseProvider responseProvider, UserDataService userDataService,
-                        ParticipantDataService participantDataService, EventDataService eventDataService) {
+    public EventService(SessionManager sessionManager, ResponseProvider responseProvider,
+                        UserDataService userDataService, ParticipantDataService participantDataService,
+                        EventDataService eventDataService) {
         this.sessionManager = sessionManager;
         this.responseProvider = responseProvider;
         this.userDataService = userDataService;
