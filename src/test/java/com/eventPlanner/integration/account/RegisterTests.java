@@ -41,7 +41,7 @@ public class RegisterTests extends BaseIntegrationTest {
         var requestDto = new CreateAccountDto(
                 user.getName(),
                 UniqueValueGenerator.uniqueString(),
-                UniqueValueGenerator.uniqueString()
+                "test2@example.com"
         );
 
         // Act
