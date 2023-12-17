@@ -1,7 +1,7 @@
 package com.eventPlanner.dataAccess.userEvents.services;
 
 import com.eventPlanner.dataAccess.userEvents.repositories.UserRepository;
-import com.eventPlanner.models.schemas.User;
+import com.eventPlanner.dataAccess.userEvents.schemas.User;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

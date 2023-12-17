@@ -1,9 +1,9 @@
 package com.eventPlanner.endpoints.account;
 
-import com.eventPlanner.models.dtos.account.LoginAccountDto;
-import com.eventPlanner.models.dtos.account.LogoutAccountDto;
-import com.eventPlanner.models.dtos.account.CreateAccountDto;
-import com.eventPlanner.models.dtos.account.DeleteAccountDto;
+import com.eventPlanner.core.models.dtos.account.LoginAccountDto;
+import com.eventPlanner.core.models.dtos.account.LogoutAccountDto;
+import com.eventPlanner.core.models.dtos.account.CreateAccountDto;
+import com.eventPlanner.core.models.dtos.account.DeleteAccountDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

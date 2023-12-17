@@ -1,9 +1,9 @@
 package com.eventPlanner.unit.endpoints.account.accountService;
 
-import com.eventPlanner.unit.testUtils.UniqueValueGenerator;
-import com.eventPlanner.models.dtos.account.LoginAccountDto;
-import com.eventPlanner.models.schemas.User;
-import com.eventPlanner.models.responses.ServiceResponse;
+import com.eventPlanner.testUtils.UniqueValueGenerator;
+import com.eventPlanner.core.models.dtos.account.LoginAccountDto;
+import com.eventPlanner.dataAccess.userEvents.schemas.User;
+import com.eventPlanner.core.models.responses.ServiceResponse;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -1,6 +1,6 @@
 package com.eventPlanner.dataAccess.userEvents.repositories;
 
-import com.eventPlanner.models.schemas.Event;
+import com.eventPlanner.dataAccess.userEvents.schemas.Event;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

@@ -1,13 +1,13 @@
 package com.eventPlanner.endpoints.events;
 
+import com.eventPlanner.core.models.dtos.events.*;
 import com.eventPlanner.dataAccess.sessions.SessionManager;
 import com.eventPlanner.dataAccess.userEvents.services.EventDataService;
 import com.eventPlanner.dataAccess.userEvents.services.ParticipantDataService;
 import com.eventPlanner.dataAccess.userEvents.services.UserDataService;
-import com.eventPlanner.models.dtos.events.*;
-import com.eventPlanner.models.schemas.Event;
-import com.eventPlanner.models.responses.ServiceResponse;
-import com.eventPlanner.models.responses.providers.ResponseProvider;
+import com.eventPlanner.dataAccess.userEvents.schemas.Event;
+import com.eventPlanner.core.models.responses.ServiceResponse;
+import com.eventPlanner.core.models.responses.providers.ResponseProvider;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

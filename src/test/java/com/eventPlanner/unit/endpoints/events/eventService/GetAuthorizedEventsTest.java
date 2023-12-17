@@ -1,8 +1,8 @@
 package com.eventPlanner.unit.endpoints.events.eventService;
 
-import com.eventPlanner.unit.testUtils.UniqueValueGenerator;
-import com.eventPlanner.models.dtos.events.RequestAuthorizedEventsDto;
-import com.eventPlanner.models.dtos.events.EventSortMethod;
+import com.eventPlanner.testUtils.UniqueValueGenerator;
+import com.eventPlanner.core.models.dtos.events.RequestAuthorizedEventsDto;
+import com.eventPlanner.core.models.dtos.events.EventSortMethod;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

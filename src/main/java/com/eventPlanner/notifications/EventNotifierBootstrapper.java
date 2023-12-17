@@ -1,6 +1,6 @@
 package com.eventPlanner.notifications;
 
-import com.eventPlanner.config.dataAccess.EventNotificationConfig;
+import com.eventPlanner.core.config.dataAccess.EventNotificationConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

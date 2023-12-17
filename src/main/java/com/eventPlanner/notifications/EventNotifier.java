@@ -1,10 +1,10 @@
 package com.eventPlanner.notifications;
 
-import com.eventPlanner.config.dataAccess.EventNotificationConfig;
+import com.eventPlanner.core.config.dataAccess.EventNotificationConfig;
 import com.eventPlanner.dataAccess.notifiedEventsManager.NotifiedEventsManager;
 import com.eventPlanner.dataAccess.userEvents.services.EventDataService;
 import com.eventPlanner.dataAccess.userEvents.services.ParticipantDataService;
-import com.eventPlanner.models.schemas.Event;
+import com.eventPlanner.dataAccess.userEvents.schemas.Event;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
