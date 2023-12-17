@@ -58,54 +58,56 @@ after running the API.
 
 *Note:* a lot of the routes that seem like they should be GET routes are POST 
 routes due to the need to transfer data like sessionId in the request body, which would
-otherwise be insecure as part of the query string.
+otherwise be insecure as part of the query String.
 
 ### Account Management Routes
-
 > **POST /accounts/login**
 
 **Description:** Logs the user into the system by creating a session. The session will expire in 30 minutes.
 
 **Request:**
-* name: string
-* password: string
+* name: String
+* password: String
 
 **Responses:**
 * 201 CREATED: ${sessionId}
 * 401 UNAUTHORIZED: Wrong username or password
 
+<br></br>
 > **POST /accounts/create**
 
 **Description:** Registers a new account to the system.  
 
 **Request:** 
-* name: string
-* password: string
-* email: string
+* name: String
+* password: String
+* email: String
 
 **Responses:**
 * 201 CREATED: User created successfully
 * 409 CONFLICT: Username already taken
 * 409 CONFLICT: Email already taken
 
+<br></br>
 > **POST /accounts/terminate**
 
 **Description:** Deletes the user from the database. Will also end the user's session and
 removed the user from any events they're participating.
 
 **Request:**
-* sessionId: string
+* sessionId: String
 
 **Responses:**
 * 200 OK: User deleted
 * 401 UNAUTHORIZED: Invalid session
 
+<br></br>
 > **POST /accounts/logout**
 
 **Description:** Logs out the user by deleting its session.
 
 **Request:**
-* sessionId: string
+* sessionId: String
 
 **Responses:**
 * 200 OK: Ended session
@@ -119,26 +121,27 @@ removed the user from any events they're participating.
 owns the event.
 
 **Request:**
-* sessionId: string
+* sessionId: String
 * eventId: Long
-* name: string (optional - will override existing event name)
-* description: string (optional - will override existing event description)
-* location: string (optional - will override existing event description)
-* time: string, format: YYYY-MM-DDThh:mm:ss (optional - will override existing event time)
-* participants: List<string> (optional - will override current participant list)
+* name: String (optional - will override existing event name)
+* description: String (optional - will override existing event description)
+* location: String (optional - will override existing event description)
+* time: String, format: YYYY-MM-DDThh:mm:ss (optional - will override existing event time)
+* participants: List<String> (optional - will override current participant list)
 
 **Responses:**
 * 200 OK
 * 401 UNAUTHORIZED: Invalid session
 * 401 UNAUTHORIZED: Unauthorized (if the session doesn't belong to the event owner)
 
+<br></br>
 > **POST /events/retrieve/specific**
 
 **Description:** retrieves the information about a specific event. Can only be done if the
 user owns or is a participant of the event.
 
 **Request:**
-* sessionId: string
+* sessionId: String
 * eventId: Long
 
 **Responses:**
@@ -147,17 +150,19 @@ user owns or is a participant of the event.
 * 401 UNAUTHORIZED: Unauthorized (if the session doesn't belong to the event owner or participant)
 * 404 NOT_FOUND: Event not found: ${eventId}
 
+<br></br>
 > **POST /events/retrieve/owned**
 
 **Description:** retrieves the information about all the events that the user owns.
 
 **Request:**
-* sessionId: string
+* sessionId: String
 
 **Responses:**
 * 200 OK: List<[EventDataDto](#eventdatadto)>
 * 401 UNAUTHORIZED: Invalid session
 
+<br></br>
 > **POST /events/retrieve/authorized**
 
 **Description:** retrieves the information about all the events that the user either owns or is invited to.
@@ -169,35 +174,37 @@ It's possible to provide a sort method in case you wish to retrieve to response 
 
 
 **Request:**
-* sessionId: string
-* eventSortMethod: string (NONE | POPULARITY | DATE | CREATION_TIME) (optional)
+* sessionId: String
+* eventSortMethod: String (NONE | POPULARITY | DATE | CREATION_TIME) (optional)
 
 **Responses:**
 * 200 OK: List<[EventDataDto](#eventdatadto)>
 * 401 UNAUTHORIZED: Invalid session
 
+<br></br>
 > **POST /events/retrieve/location**
 
 **Description:** retrieves the information about all the events that happen in a location, and that the user is 
 authorized to view (participant or owner).
 
 **Request:**
-* sessionId: string
+* sessionId: String
 
 **Responses:**
 * 200 OK: List<[EventDataDto](#eventdatadto)>
 * 401 UNAUTHORIZED: Invalid session
 
+<br></br>
 > **POST /events/create**
 
 **Description:** creates a new event.
 
 **Request:**
-* name: string
-* sessionId: string
-* description: string
-* location: string
-* time: string, format: YYYY-MM-DDThh:mm:ss
+* name: String
+* sessionId: String
+* description: String
+* location: String
+* time: String, format: YYYY-MM-DDThh:mm:ss
 * participants: List<String>
 
 **Responses:**
@@ -205,13 +212,14 @@ authorized to view (participant or owner).
 * 401 UNAUTHORIZED: Invalid session
 * 404 NOT_FOUND: Some of the participants are invalid. (if a participant can't be found)
 
+<br></br>
 > **POST /events/delete/specific**
 
 **Description:** deletes an existing event. Can only be done by the event owner.
 
 **Request:**
 * eventId: Long
-* sessionId: string
+* sessionId: String
 
 **Responses:**
 * 200 OK: List<[EventDataDto](#eventdatadto)>
