@@ -1,8 +1,8 @@
 package com.eventPlanner.dataAccess.userEvents.services;
 
 import com.eventPlanner.dataAccess.userEvents.repositories.EventRepository;
-import com.eventPlanner.models.schemas.Event;
-import com.eventPlanner.models.types.EventSortMethod;
+import com.eventPlanner.dataAccess.userEvents.schemas.Event;
+import com.eventPlanner.core.models.dtos.events.EventSortMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +21,7 @@ public class EventDataService {
     public EventDataService(EventRepository eventRepository) {
         this.eventRepository = eventRepository;
 
+        sortMethodFunctionMap.put(EventSortMethod.NONE, eventRepository::findAllEventsByParticipantId);
         sortMethodFunctionMap.put(EventSortMethod.DATE, eventRepository::findAllEventsByParticipantIdOrderByTime);
         sortMethodFunctionMap.put(EventSortMethod.CREATION_TIME, eventRepository::findAllEventsByParticipantIdOrderByCreationTime);
         sortMethodFunctionMap.put(EventSortMethod.POPULARITY, eventRepository::findAllEventsByParticipantIdOrderByPopularity);

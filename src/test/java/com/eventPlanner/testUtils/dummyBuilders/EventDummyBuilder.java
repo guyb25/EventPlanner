@@ -1,6 +1,6 @@
 package com.eventPlanner.testUtils.dummyBuilders;
 
-import com.eventPlanner.models.schemas.Event;
+import com.eventPlanner.dataAccess.userEvents.schemas.Event;
 import com.eventPlanner.testUtils.UniqueValueGenerator;
 
 import java.time.LocalDateTime;
