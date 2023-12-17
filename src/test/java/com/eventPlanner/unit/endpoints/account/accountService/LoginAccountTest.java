@@ -1,6 +1,6 @@
-package com.eventPlanner.endpoints.account.accountService;
+package com.eventPlanner.unit.endpoints.account.accountService;
 
-import com.eventPlanner.testUtils.UniqueValueGenerator;
+import com.eventPlanner.unit.testUtils.UniqueValueGenerator;
 import com.eventPlanner.models.dtos.account.LoginAccountDto;
 import com.eventPlanner.models.schemas.User;
 import com.eventPlanner.models.responses.ServiceResponse;

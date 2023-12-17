@@ -1,8 +1,9 @@
-package com.eventPlanner.endpoints.events.eventService;
+package com.eventPlanner.unit.endpoints.events.eventService;
 
-import com.eventPlanner.testUtils.UniqueValueGenerator;
+import com.eventPlanner.unit.testUtils.UniqueValueGenerator;
 import com.eventPlanner.models.dtos.events.CreateEventDto;
 import com.eventPlanner.models.schemas.Event;
+import com.eventPlanner.unit.testUtils.dummyBuilders.EventDtoDummyBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -14,29 +15,30 @@ import static org.mockito.Mockito.*;
 
 public class CreateEventTest extends BaseEventServiceTest {
     private Event eventDummy;
-
-    private List<String> participantNamesDummy;
+    private CreateEventDto createEventDto;
 
     @BeforeEach
     public void setup() {
         super.setup();
-        participantNamesDummy = List.of("user1", "user2", "user3");
         eventDummy = eventDummyBuilder.generate().build();
+        createEventDto = new CreateEventDto(
+                eventDummy.getName(),
+                UniqueValueGenerator.uniqueString(),
+                eventDummy.getDescription(),
+                eventDummy.getLocation(),
+                eventDummy.getTime(),
+                List.of(
+                        UniqueValueGenerator.uniqueString(),
+                        UniqueValueGenerator.uniqueString(),
+                        UniqueValueGenerator.uniqueString()
+                )
+        );
     }
 
     @Test
     public void testCreateEvent_InvalidSession_EventNotCreatedAndReturnFailure() {
         // Arrange
         var expectedResponse = responseProvider.session().invalidSession();
-        var createEventDto = new CreateEventDto(
-                eventDummy.getName(),
-                UniqueValueGenerator.uniqueString(),
-                eventDummy.getDescription(),
-                eventDummy.getLocation(),
-                eventDummy.getTime(),
-                participantNamesDummy
-        );
-
         mockInvalidSession(createEventDto.sessionId());
 
         // Act
@@ -52,19 +54,11 @@ public class CreateEventTest extends BaseEventServiceTest {
     public void testCreateEvent_AllUsersExist_EventCreatedAndReturnSuccess() {
         // Arrange
         var expectedResponse = responseProvider.event().eventCreated(eventDummy.getId());
-        var createEventDto = new CreateEventDto(
-                eventDummy.getName(),
-                UniqueValueGenerator.uniqueString(),
-                eventDummy.getDescription(),
-                eventDummy.getLocation(),
-                eventDummy.getTime(),
-                participantNamesDummy
-        );
         ArgumentCaptor<Event> eventCaptor = ArgumentCaptor.forClass(Event.class);
 
         mockValidSession(createEventDto.sessionId());
         when(sessionManager.getUserIdFromSession(createEventDto.sessionId())).thenReturn(eventDummy.getHostId());
-        when(userDataService.doAllParticipantsExistByNames(participantNamesDummy)).thenReturn(true);
+        when(userDataService.doAllParticipantsExistByNames(createEventDto.participants())).thenReturn(true);
         when(eventDataService.scheduleEvent(any())).thenReturn(eventDummy);
 
         // Act
@@ -77,7 +71,7 @@ public class CreateEventTest extends BaseEventServiceTest {
                 .scheduleEvent(eventCaptor.capture());
 
         verify(participantDataService, times(1))
-                .inviteParticipantsToEvent(eventDummy.getId(), participantNamesDummy);
+                .inviteParticipantsToEvent(eventDummy.getId(), createEventDto.participants());
 
         assertThat(eventCaptor.getValue().getHostId()).isEqualTo(eventDummy.getHostId());
     }
@@ -86,18 +80,10 @@ public class CreateEventTest extends BaseEventServiceTest {
     public void testCreateEvent_ParticipantsDontExist_EventNotCreatedAndExceptionThrown() {
         // Arrange
         var expectedResponse = responseProvider.event().participantsNotExist();
-        var createEventDto = new CreateEventDto(
-                eventDummy.getName(),
-                UniqueValueGenerator.uniqueString(),
-                eventDummy.getDescription(),
-                eventDummy.getLocation(),
-                eventDummy.getTime(),
-                participantNamesDummy
-        );
 
         mockValidSession(createEventDto.sessionId());
         when(sessionManager.getUserIdFromSession(createEventDto.sessionId())).thenReturn(eventDummy.getHostId());
-        when(userDataService.doAllParticipantsExistByNames(participantNamesDummy)).thenReturn(false);
+        when(userDataService.doAllParticipantsExistByNames(createEventDto.participants())).thenReturn(false);
 
         // Act
         var actualResponse = eventService.createEvent(createEventDto);

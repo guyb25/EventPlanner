@@ -2,6 +2,8 @@ package com.eventPlanner.dataAccess.userEvents.services;
 
 import com.eventPlanner.dataAccess.userEvents.repositories.UserRepository;
 import com.eventPlanner.models.schemas.User;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.List;
 public class UserDataService {
     private final UserRepository userRepository;
 
+    @Autowired
     public UserDataService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -38,8 +41,9 @@ public class UserDataService {
         return userRepository.save(user);
     }
 
+    @Transactional
     public boolean isUsernameTaken(String username) {
-        return userRepository.existsUserByEmail(username);
+        return userRepository.existsUserByName(username);
     }
 
     public boolean isEmailTaken(String email) {

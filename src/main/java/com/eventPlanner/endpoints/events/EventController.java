@@ -21,39 +21,41 @@ public class EventController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createEvent(@Valid CreateEventDto createEventDto) {
+    public ResponseEntity<String> createEvent(@Valid @RequestBody CreateEventDto createEventDto) {
         return eventService.createEvent(createEventDto).toResponse();
     }
 
     @DeleteMapping("/delete/specific")
-    public ResponseEntity<String> deleteEvent(@Valid DeleteEventDto deleteEventDto) {
+    public ResponseEntity<String> deleteEvent(@Valid @RequestBody DeleteEventDto deleteEventDto) {
         return eventService.deleteEvent(deleteEventDto).toResponse();
     }
 
     @PostMapping("/retrieve/owned")
-    public ResponseEntity<List<EventDataDto>> retrieveOwnedEvents(@Valid RequestOwnedEventsDto requestOwnedEventsDto) {
+    public ResponseEntity<List<EventDataDto>> retrieveOwnedEvents(
+            @Valid @RequestBody  RequestOwnedEventsDto requestOwnedEventsDto) {
         return eventService.getOwnedEvents(requestOwnedEventsDto).toResponse();
     }
 
     @PostMapping("/retrieve/authorized")
     public ResponseEntity<List<EventDataDto>> retrieveAuthorizedEvents(
-            @Valid RequestAuthorizedEventsDto requestAuthorizedEventsDto) {
+            @Valid @RequestBody RequestAuthorizedEventsDto requestAuthorizedEventsDto) {
         return eventService.getAuthorizedEvents(requestAuthorizedEventsDto).toResponse();
     }
 
     @PostMapping("/retrieve/specific")
-    public ResponseEntity<EventDataDto> retrieveSpecificEvent(@Valid RequestSpecificEventDto requestSpecificEventDto) {
+    public ResponseEntity<EventDataDto> retrieveSpecificEvent(
+            @Valid @RequestBody RequestSpecificEventDto requestSpecificEventDto) {
         return eventService.getSpecificEvent(requestSpecificEventDto).toResponse();
     }
 
     @PutMapping("/update/specific")
-    public ResponseEntity<String> updateSpecificEvent(@Valid UpdateEventDto updateEventDto) {
+    public ResponseEntity<String> updateSpecificEvent(@Valid @RequestBody UpdateEventDto updateEventDto) {
         return eventService.updateSpecificEvent(updateEventDto).toResponse();
     }
 
     @PostMapping("/retrieve/location")
     public ResponseEntity<List<EventDataDto>> retrieveLocationEvents(
-            @Valid RequestLocationEventsDto requestLocationEventsDto) {
+            @Valid @RequestBody RequestLocationEventsDto requestLocationEventsDto) {
         return eventService.getLocationEvents(requestLocationEventsDto).toResponse();
     }
 }
