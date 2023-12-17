@@ -1,4 +1,4 @@
-package com.eventPlanner.endpoints;
+package com.eventPlanner.unit.endpoints;
 
 import com.eventPlanner.dataAccess.sessions.SessionManager;
 import com.eventPlanner.dataAccess.userEvents.services.ParticipantDataService;

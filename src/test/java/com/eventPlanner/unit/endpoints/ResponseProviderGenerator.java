@@ -1,4 +1,4 @@
-package com.eventPlanner.endpoints;
+package com.eventPlanner.unit.endpoints;
 
 import com.eventPlanner.models.responses.providers.*;
 

@@ -1,7 +1,7 @@
-package com.eventPlanner.testUtils.dummyBuilders;
+package com.eventPlanner.unit.testUtils.dummyBuilders;
 
 import com.eventPlanner.models.schemas.Event;
-import com.eventPlanner.testUtils.UniqueValueGenerator;
+import com.eventPlanner.unit.testUtils.UniqueValueGenerator;
 
 import java.time.LocalDateTime;
 
