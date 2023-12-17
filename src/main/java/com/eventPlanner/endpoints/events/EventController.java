@@ -1,6 +1,6 @@
 package com.eventPlanner.endpoints.events;
 
-import com.eventPlanner.models.dtos.events.*;
+import com.eventPlanner.core.models.dtos.events.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class EventController {
 
     @PostMapping("/retrieve/owned")
     public ResponseEntity<List<EventDataDto>> retrieveOwnedEvents(
-            @Valid @RequestBody  RequestOwnedEventsDto requestOwnedEventsDto) {
+            @Valid @RequestBody RequestOwnedEventsDto requestOwnedEventsDto) {
         return eventService.getOwnedEvents(requestOwnedEventsDto).toResponse();
     }
 

@@ -1,9 +1,9 @@
 package com.eventPlanner.integration.account;
 
 import com.eventPlanner.integration.BaseIntegrationTest;
-import com.eventPlanner.models.dtos.account.CreateAccountDto;
-import com.eventPlanner.models.schemas.User;
-import com.eventPlanner.unit.testUtils.UniqueValueGenerator;
+import com.eventPlanner.core.models.dtos.account.CreateAccountDto;
+import com.eventPlanner.dataAccess.userEvents.schemas.User;
+import com.eventPlanner.testUtils.UniqueValueGenerator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

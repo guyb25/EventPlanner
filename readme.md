@@ -66,8 +66,8 @@ otherwise be insecure as part of the query String.
 **Description:** Logs the user into the system by creating a session. The session will expire in 30 minutes.
 
 **Request:**
-* name: String
-* password: String
+* name: String (3~255 characters)
+* password: String (3~255 characters)
 
 **Responses:**
 * 201 CREATED: ${sessionId}
@@ -79,9 +79,9 @@ otherwise be insecure as part of the query String.
 **Description:** Registers a new account to the system.  
 
 **Request:** 
-* name: String
-* password: String
-* email: String
+* name: String (3~255 characters)
+* password: String (3~255 characters)
+* email: String, must be a well-formed email address
 
 **Responses:**
 * 201 CREATED: User created successfully
@@ -123,7 +123,7 @@ owns the event.
 **Request:**
 * sessionId: String
 * eventId: Long
-* name: String (optional - will override existing event name)
+* name: String (3~255 characters) (optional - will override existing event name)
 * description: String (optional - will override existing event description)
 * location: String (optional - will override existing event description)
 * time: String, format: YYYY-MM-DDThh:mm:ss (optional - will override existing event time)
@@ -200,7 +200,7 @@ authorized to view (participant or owner).
 **Description:** creates a new event.
 
 **Request:**
-* name: String
+* name: String (3~255 characters)
 * sessionId: String
 * description: String
 * location: String

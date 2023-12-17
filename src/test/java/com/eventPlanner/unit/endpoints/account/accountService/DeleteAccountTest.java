@@ -2,8 +2,8 @@ package com.eventPlanner.unit.endpoints.account.accountService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.eventPlanner.unit.testUtils.UniqueValueGenerator;
-import com.eventPlanner.models.dtos.account.DeleteAccountDto;
+import com.eventPlanner.testUtils.UniqueValueGenerator;
+import com.eventPlanner.core.models.dtos.account.DeleteAccountDto;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.ArgumentMatchers.any;

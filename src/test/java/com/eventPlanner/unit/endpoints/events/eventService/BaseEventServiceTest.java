@@ -2,11 +2,11 @@ package com.eventPlanner.unit.endpoints.events.eventService;
 
 import com.eventPlanner.dataAccess.userEvents.services.EventDataService;
 import com.eventPlanner.unit.endpoints.BaseEndpointTest;
-import com.eventPlanner.unit.testUtils.dummyBuilders.EventDtoDummyBuilder;
-import com.eventPlanner.unit.testUtils.dummyBuilders.EventDummyBuilder;
+import com.eventPlanner.testUtils.dummyBuilders.EventDtoDummyBuilder;
+import com.eventPlanner.testUtils.dummyBuilders.EventDummyBuilder;
 import com.eventPlanner.endpoints.events.EventService;
-import com.eventPlanner.models.dtos.events.EventDataDto;
-import com.eventPlanner.models.schemas.Event;
+import com.eventPlanner.core.models.dtos.events.EventDataDto;
+import com.eventPlanner.dataAccess.userEvents.schemas.Event;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

@@ -1,9 +1,8 @@
 package com.eventPlanner.unit.endpoints.events.eventService;
 
-import com.eventPlanner.unit.testUtils.UniqueValueGenerator;
-import com.eventPlanner.models.dtos.events.CreateEventDto;
-import com.eventPlanner.models.schemas.Event;
-import com.eventPlanner.unit.testUtils.dummyBuilders.EventDtoDummyBuilder;
+import com.eventPlanner.testUtils.UniqueValueGenerator;
+import com.eventPlanner.core.models.dtos.events.CreateEventDto;
+import com.eventPlanner.dataAccess.userEvents.schemas.Event;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;

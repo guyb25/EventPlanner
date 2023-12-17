@@ -1,8 +1,7 @@
 package com.eventPlanner.dataAccess.userEvents.repositories;
 
-import com.eventPlanner.models.schemas.Event;
-import com.eventPlanner.models.schemas.EventParticipantId;
-import com.eventPlanner.models.schemas.Participant;
+import com.eventPlanner.dataAccess.userEvents.schemas.EventParticipantId;
+import com.eventPlanner.dataAccess.userEvents.schemas.Participant;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

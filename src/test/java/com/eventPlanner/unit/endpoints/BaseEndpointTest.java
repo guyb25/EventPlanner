@@ -3,7 +3,7 @@ package com.eventPlanner.unit.endpoints;
 import com.eventPlanner.dataAccess.sessions.SessionManager;
 import com.eventPlanner.dataAccess.userEvents.services.ParticipantDataService;
 import com.eventPlanner.dataAccess.userEvents.services.UserDataService;
-import com.eventPlanner.models.responses.providers.ResponseProvider;
+import com.eventPlanner.core.models.responses.providers.ResponseProvider;
 import org.mockito.Mock;
 
 import static org.mockito.Mockito.when;
