@@ -1,13 +1,16 @@
 package com.eventPlanner.models.dtos.account;
 
+import com.eventPlanner.models.validation.constraints.account.PasswordConstraint;
+import com.eventPlanner.models.validation.constraints.account.UserConstraint;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Email;
 
 public record CreateAccountDto(
-        @NotEmpty(message = "username is required") String name,
-        @NotEmpty(message = "password is required") String password,
-        @NotEmpty(message = "email is required")
+        @UserConstraint
+        String name,
+        @PasswordConstraint
+        String password,
+        @Email
         @Schema(example = "example@gmail.com")
         String email) {
 }

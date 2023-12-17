@@ -1,4 +1,4 @@
-package com.eventPlanner.config;
+package com.eventPlanner.config.dataAccess;
 
 import com.eventPlanner.dataAccess.sessions.RedisSessionManager;
 import com.eventPlanner.dataAccess.sessions.SessionManager;

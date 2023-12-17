@@ -81,7 +81,7 @@ otherwise be insecure as part of the query String.
 **Request:** 
 * name: String
 * password: String
-* email: String
+* email: String, must be a well-formed email address
 
 **Responses:**
 * 201 CREATED: User created successfully

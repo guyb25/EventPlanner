@@ -1,4 +1,4 @@
-package com.eventPlanner.config;
+package com.eventPlanner.config.dataAccess;
 
 import com.eventPlanner.dataAccess.notifiedEventsManager.NotifiedEventsManager;
 import com.eventPlanner.dataAccess.notifiedEventsManager.RedisNotifiedEventsManager;

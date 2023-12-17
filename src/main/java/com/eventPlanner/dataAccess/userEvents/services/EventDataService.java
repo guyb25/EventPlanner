@@ -2,7 +2,7 @@ package com.eventPlanner.dataAccess.userEvents.services;
 
 import com.eventPlanner.dataAccess.userEvents.repositories.EventRepository;
 import com.eventPlanner.models.schemas.Event;
-import com.eventPlanner.models.types.EventSortMethod;
+import com.eventPlanner.models.dtos.events.EventSortMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

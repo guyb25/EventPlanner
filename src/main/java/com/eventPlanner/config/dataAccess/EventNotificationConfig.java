@@ -1,4 +1,4 @@
-package com.eventPlanner.config;
+package com.eventPlanner.config.dataAccess;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.eventPlanner.models.types;
+package com.eventPlanner.models.dtos.events;
 
 public enum EventSortMethod {
     NONE,

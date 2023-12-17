@@ -1,6 +1,6 @@
 package com.eventPlanner.models.dtos.account;
 
-import jakarta.validation.constraints.NotEmpty;
+import com.eventPlanner.models.validation.constraints.SessionIdConstraint;
 
-public record DeleteAccountDto(@NotEmpty(message = "sessionId is required") String sessionId) {
+public record DeleteAccountDto(@SessionIdConstraint String sessionId) {
 }
