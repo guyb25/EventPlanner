@@ -142,6 +142,10 @@ public class EventService {
         Long userId = sessionManager.getUserIdFromSession(updateEventDto.sessionId());
         Event event = eventDataService.tryFindEventById(updateEventDto.eventId());
 
+        if (event == null) {
+            return responseProvider.event().eventNotFound(updateEventDto.eventId());
+        }
+
         if (!event.getHostId().equals(userId)) {
             return responseProvider.general().unauthorized();
         }
