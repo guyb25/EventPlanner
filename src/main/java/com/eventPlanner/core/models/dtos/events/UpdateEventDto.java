@@ -2,13 +2,14 @@ package com.eventPlanner.core.models.dtos.events;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public record UpdateEventDto(
         @NotEmpty String sessionId,
-        @NotEmpty Long eventId,
+        @NotNull Long eventId,
         String name,
         String description,
         String location,
